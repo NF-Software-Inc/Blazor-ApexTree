@@ -14,6 +14,16 @@ namespace ApexTree;
 public class DataNodeOptions
 {
 	/// <summary>
+	/// The width of the graph node in pixels.
+	/// </summary>
+	public virtual int? NodeWidth { get; set; }
+
+	/// <summary>
+	/// The height of the graph node in pixels.
+	/// </summary>
+	public virtual int? NodeHeight { get; set; }
+
+	/// <summary>
 	/// The hex background color of the node.
 	/// </summary>
 	/// <remarks>
@@ -32,7 +42,15 @@ public class DataNodeOptions
 	/// <summary>
 	/// The CSS styles to apply to the node.
 	/// </summary>
-	public string? NodeStyle { get; set; }
+	public virtual string? NodeStyle { get; set; }
+
+	/// <summary>
+	/// The CSS classes to apply to the node.
+	/// </summary>
+	/// <remarks>
+	/// Undocumented property from source TypeScript.
+	/// </remarks>
+	public virtual string? NodeClassName { get; set; }
 
 	/// <summary>
 	/// The border width of the node in pixels.
@@ -77,6 +95,14 @@ public class DataNodeOptions
 	public virtual string? BorderColorHover { get; set; }
 
 	/// <summary>
+	/// The edge width of the node in pixels.
+	/// </summary>
+	/// <remarks>
+	/// Undocumented property from source TypeScript.
+	/// </remarks>
+	public virtual int? EdgeWidth { get; set; }
+
+	/// <summary>
 	/// The hex color for the edge of the node.
 	/// </summary>
 	/// <remarks>
@@ -93,6 +119,11 @@ public class DataNodeOptions
 	public virtual string? EdgeColorHover { get; set; }
 
 	/// <summary>
+	/// The tooltip HTML element id.
+	/// </summary>
+	public virtual string? TooltipId { get; set; }
+
+	/// <summary>
 	/// The hex border color of tooltip.
 	/// </summary>
 	/// <remarks>
@@ -107,6 +138,11 @@ public class DataNodeOptions
 	/// Prefix with '#'.
 	/// </remarks>
 	public virtual string? TooltipBGColor { get; set; }
+
+	/// <summary>
+	/// The max width of the tooltip in pixels.
+	/// </summary>
+	public virtual int? TooltipMaxWidth { get; set; }
 
 	/// <summary>
 	/// The size of font of the node in pixels.

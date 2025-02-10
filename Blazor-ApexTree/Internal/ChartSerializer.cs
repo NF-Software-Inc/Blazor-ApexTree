@@ -18,6 +18,8 @@ internal static class ChartSerializer
 			options.ReadCommentHandling = JsonCommentHandling.Disallow;
 			options.WriteIndented = false;
 
+			options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+
 			return options;
 		}
 	}

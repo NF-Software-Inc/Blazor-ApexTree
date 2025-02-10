@@ -16,13 +16,11 @@ public class ApexTreeOptions : DataNodeOptions
 	/// <summary>
 	/// The HTML id attribute for the chart.
 	/// </summary>
-	[JsonIgnore]
 	public string Id { get; set; } = Guid.NewGuid().ToHtmlId().ToString("N");
 
 	/// <summary>
 	/// Enables debug mode when true.
 	/// </summary>
-	[JsonIgnore]
 	public bool Debug { get; set; }
 
 	/// <summary>
@@ -79,7 +77,7 @@ public class ApexTreeOptions : DataNodeOptions
 	/// <summary>
 	/// The spacing between children and parent in pixels.
 	/// </summary>
-	public int? ChildrenSpacing { get; set; }
+	public int? ChildrenSpacing { get; set; } = 20;
 
 	/// <summary>
 	/// Enable or disable highlight on hover.
@@ -113,21 +111,6 @@ public class ApexTreeOptions : DataNodeOptions
 	public bool EnableTooltip { get; set; }
 
 	/// <summary>
-	/// The tooltip HTML element id.
-	/// </summary>
-	public string TooltipId { get; set; } = "apextree-tooltip-container";
-
-	/// <summary>
-	/// The width of graph nodes in pixels.
-	/// </summary>
-	public int NodeWidth { get; set; } = 50;
-
-	/// <summary>
-	/// The height of graph nodes in pixels.
-	/// </summary>
-	public int NodeHeight { get; set; } = 50;
-
-	/// <summary>
 	/// A function that returns the HTML template for nodes. Example:
 	///
 	/// <code>
@@ -137,6 +120,7 @@ public class ApexTreeOptions : DataNodeOptions
 	/// <remarks>
 	/// The function will receive a parameter containing a single item from the collection.
 	/// </remarks>
+	[JsonConverter(typeof(FunctionStringConverter))]
 	public string? NodeTemplate { get; set; }
 
 	/// <summary>
@@ -149,12 +133,14 @@ public class ApexTreeOptions : DataNodeOptions
 	/// <remarks>
 	/// The function will receive a string parameter for the provided content.
 	/// </remarks>
+	[JsonConverter(typeof(FunctionStringConverter))]
 	public string? TooltipTemplate { get; set; }
 
-	/// <summary>
-	/// The max width of the tooltip in pixels.
-	/// </summary>
-	public int TooltipMaxWidth { get; set; } = 100;
+	/// <inheritdoc />
+	public override int? NodeWidth { get; set; } = 150;
+
+	/// <inheritdoc />
+	public override int? NodeHeight { get; set; } = 100;
 
 	/// <inheritdoc />
 	public override string? NodeBGColor { get; set; } = "#FFFFFF";
@@ -185,10 +171,16 @@ public class ApexTreeOptions : DataNodeOptions
 	public override string? EdgeColorHover { get; set; } = "#BCBCBC";
 
 	/// <inheritdoc />
+	public override string? TooltipId { get; set; } = "apextree-tooltip-container";
+
+	/// <inheritdoc />
 	public override string? TooltipBorderColor { get; set; } = "#BCBCBC";
 
 	/// <inheritdoc />
 	public override string? TooltipBGColor { get; set; } = "#FFFFFF";
+
+	/// <inheritdoc />
+	public override int? TooltipMaxWidth { get; set; } = 100;
 
 	/// <inheritdoc />
 	[JsonIgnore]

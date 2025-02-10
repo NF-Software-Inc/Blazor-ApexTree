@@ -12,6 +12,6 @@ internal static class JsLoader
 			javascriptPath = path;
 
 		var module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", javascriptPath);
-		return await module.InvokeAsync<IJSObjectReference>("get_apextree");
+		return await module.InvokeAsync<IJSObjectReference>("GetApexTree");
 	}
 }
