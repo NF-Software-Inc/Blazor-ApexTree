@@ -31,7 +31,7 @@ jobs:
     - name: Build
       run: |
         dotnet build --configuration Release
-        dotnet pack --configuration Release --output ${{ env.NuGetDirectory }} /p:AssemblyVersion=${{ env.PublishVersion }} /p:Version=${{ env.PublishVersion }} /p:FileVersion=${{ env.PublishVersion }}
+        dotnet pack --configuration Release --output ${{ env.NuGetDirectory }} /p:AssemblyVersion=${{ env.PublishVersion }} /p:Version=${{ github.event.release.tag_name }} /p:FileVersion=${{ env.PublishVersion }}
       working-directory: ./Blazor-ApexTree
     - uses: actions/upload-artifact@v4
       with:
@@ -44,6 +44,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: [ package ]
     steps:
+      - run: exit 0 # Currently disabled due to code signing requirements
       - uses: actions/download-artifact@v4
         with:
           name: nuget
@@ -53,7 +54,5 @@ jobs:
         with:
           dotnet-version: 8.0.x
       - name: Publish NuGet package
-        run: |
-          foreach($file in (Get-ChildItem "${{ env.NuGetDirectory }}" -Recurse -Include *.nupkg)) {
-              dotnet nuget push $file --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
-          }
+        run: dotnet nuget push ${{ env.NuGetDirectory }}/*.nupkg --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        
