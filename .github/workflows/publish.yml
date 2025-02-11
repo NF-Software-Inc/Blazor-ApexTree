@@ -9,8 +9,8 @@ on:
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
-  NuGetDirectory: '/nuget'
-  PublishVersion: '1.0.0'
+  NuGetDirectory: ${{ github.workspace }}/nuget
+  PublishVersion: ${GITHUB_REF##*/}.${{ github.run_number }}
 
 defaults:
   run:
@@ -21,12 +21,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - name: Set Environment Variables
-      run: |
-        echo "NuGetDirectory=${{ github.workspace }}/nuget" >> $GITHUB_ENV
-        echo "PublishVersion=${GITHUB_REF##*/}.${{ github.run_number }}" >> $GITHUB_ENV
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
