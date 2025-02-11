@@ -1,0 +1,12 @@
+﻿[
+  {
+    "outputFileName": "wwwroot/js/blazor-apextree.js",
+    "inputFiles": [
+      "JavaScript/blazor-apextree.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "commentMode": "all"
+    }
+  }
+]
