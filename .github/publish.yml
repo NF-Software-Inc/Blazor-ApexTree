@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+name: publish
+on:
+  workflow_dispatch:
+  release:
+    types: [ published ]
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: true
+  NuGetDirectory: '/nuget'
+  PublishVersion: '1.0.0'
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Set Environment Variables
+      run: |
+        echo "NuGetDirectory=${{ github.workspace }}/nuget" >> $GITHUB_ENV
+        echo "PublishVersion=${GITHUB_REF##*/}.${{ github.run_number }}" >> $GITHUB_ENV
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Install dependencies
+      run: dotnet restore
+      working-directory: ./Blazor-ApexTree
+    - name: Build
+      run: |
+        dotnet build --configuration Release
+        dotnet pack --configuration Release --output ${{ env.NuGetDirectory }} /p:AssemblyVersion=${{ env.PublishVersion }} /p:Version=${{ env.PublishVersion }} /p:FileVersion=${{ env.PublishVersion }}
+      working-directory: ./Blazor-ApexTree
+    - uses: actions/upload-artifact@v4
+      with:
+        name: nuget
+        if-no-files-found: error
+        retention-days: 7
+        path: ${{ env.NuGetDirectory }}/*.nupkg
+  deploy:
+    if: github.event_name == 'release'
+    runs-on: ubuntu-24.04
+    needs: [ package ]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: nuget
+          path: ${{ env.NuGetDirectory }}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Publish NuGet package
+        run: |
+          foreach($file in (Get-ChildItem "${{ env.NuGetDirectory }}" -Recurse -Include *.nupkg)) {
+              dotnet nuget push $file --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          }
