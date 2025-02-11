@@ -10,7 +10,7 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
   NuGetDirectory: ${{ github.workspace }}/nuget
-  PublishVersion: ${GITHUB_REF##*/}.${{ github.run_number }}
+  PublishVersion: ${{ github.event.release.tag_name }}.${{ github.run_number }}
 
 defaults:
   run:
