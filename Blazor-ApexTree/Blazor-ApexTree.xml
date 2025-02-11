@@ -1,0 +1,597 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Blazor-ApexTree</name>
+    </assembly>
+    <members>
+        <member name="T:ApexTree.ApexTree`1">
+            <summary>
+            Main component to create an Apex tree in Blazor.
+            </summary>
+            <typeparam name="TItem">The data type of the items to display in the tree.</typeparam>
+        </member>
+        <member name="P:ApexTree.ApexTree`1.Parent">
+            <summary>
+            The main node to display in the chart. Add all child items to this node.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTree`1.Options">
+            <summary>
+            The options to customize the chart with.
+            </summary>
+            <remarks>
+            Each instance of this component must have its own options object.
+            </remarks>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.OnInitialized">
+            <inheritdoc/>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.OnAfterRenderAsync(System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.OnParametersSet">
+            <inheritdoc/>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.CollapseNode(System.String)">
+            <summary>
+            Collapses the specified node.
+            </summary>
+            <param name="id">The HTML id of the node to collapse.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.ExpandNode(System.String)">
+            <summary>
+            Expands the specified node.
+            </summary>
+            <param name="id">he HTML id of the node to expand.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.ChangeLayout(ApexTree.Direction)">
+            <summary>
+            Changes the layout of the chart.
+            </summary>
+            <param name="direction">The updated direction of the layout to apply.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.FitScreen">
+            <summary>
+            Updates the chart to fit to the current viewport.
+            </summary>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.Render(System.Boolean)">
+            <summary>
+            Rerenders the chart.
+            </summary>
+            <param name="keepOldPosition">Undocumented.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.DisposeAsync">
+            <inheritdoc />
+        </member>
+        <member name="T:ApexTree.LengthUnits">
+            <summary>
+            A listing of methods to measure elements on the screen.
+            </summary>
+        </member>
+        <member name="F:ApexTree.LengthUnits.Default">
+            <summary>
+            No units are provided.
+            </summary>
+        </member>
+        <member name="F:ApexTree.LengthUnits.Pixels">
+            <summary>
+            Measure in pixels.
+            </summary>
+        </member>
+        <member name="F:ApexTree.LengthUnits.Percent">
+            <summary>
+            Measure as a percentage of the parent element.
+            </summary>
+        </member>
+        <member name="F:ApexTree.LengthUnits.Element">
+            <summary>
+            Measure as a multiple of the current element.
+            </summary>
+        </member>
+        <member name="F:ApexTree.LengthUnits.RootElement">
+            <summary>
+            Measure as a multiple of the root element.
+            </summary>
+        </member>
+        <member name="F:ApexTree.LengthUnits.Points">
+            <summary>
+            Measure in points.
+            </summary>
+        </member>
+        <member name="F:ApexTree.LengthUnits.Viewport">
+            <summary>
+            Measure as a percentage of the viewport.
+            </summary>
+        </member>
+        <member name="F:ApexTree.LengthUnits.ViewportMin">
+            <summary>
+            Measure as a percentage of the smaller dimension of the viewport.
+            </summary>
+        </member>
+        <member name="F:ApexTree.LengthUnits.ViewportMax">
+            <summary>
+            Measure as a percentage of the larger dimension of the viewport.
+            </summary>
+        </member>
+        <member name="F:ApexTree.LengthUnits.Millimeters">
+            <summary>
+            Measure in millimeters.
+            </summary>
+        </member>
+        <member name="F:ApexTree.LengthUnits.Centimeters">
+            <summary>
+            Measure in centimeters.
+            </summary>
+        </member>
+        <member name="F:ApexTree.LengthUnits.Inches">
+            <summary>
+            Measure in inches.
+            </summary>
+        </member>
+        <member name="T:ApexTree.Internal.FunctionStringConverter">
+             <summary>
+             Ensures that JS functions are serialized with the key '@eval' so they can be appropriately evaluated on the client side. Example:
+            
+             <code>
+             myFunction: {
+                 "@eval": "(content) => { return `&lt;div style='display: flex; justify-content: center; align-items: center; text-align: center; height: 100%;'&gt;${content}&lt;/div&gt;`; }"
+             }
+             </code>
+             </summary>
+        </member>
+        <member name="M:ApexTree.Internal.FunctionStringConverter.CanConvert(System.Type)">
+            <inheritdoc />
+        </member>
+        <member name="M:ApexTree.Internal.FunctionStringConverter.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">
+            <inheritdoc />
+        </member>
+        <member name="M:ApexTree.Internal.FunctionStringConverter.Write(System.Text.Json.Utf8JsonWriter,System.String,System.Text.Json.JsonSerializerOptions)">
+            <inheritdoc />
+        </member>
+        <member name="T:ApexTree.ApexTreeOptions">
+             <summary>
+             Main class to configure options that are to be serialized and passed to the JavaScript.
+             </summary>
+             <remarks>
+             Links:
+            
+             <see href="https://apexcharts.com/apextree/docs/options">JavaScript Documentation</see>.
+             </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.Id">
+            <summary>
+            The HTML id attribute for the chart.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.Debug">
+            <summary>
+            Enables debug mode when true.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.Width">
+            <summary>
+            The width of graph container.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.WidthUnits">
+            <summary>
+            The measurement type to use for the <see cref="P:ApexTree.ApexTreeOptions.Width"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.Height">
+            <summary>
+            The height of graph container in pixels.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.HeightUnits">
+            <summary>
+            The measurement type to use for the <see cref="P:ApexTree.ApexTreeOptions.Height"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.Direction">
+            <summary>
+            The direction of the tree to start rendering.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.ContentKey">
+            <summary>
+            The key of content in passed data object.
+            </summary>
+            <remarks>
+            The name of the data key after serialization that selects the text to display.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.SiblingSpacing">
+            <summary>
+            The spacing between sibling nodes in pixels.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.ChildrenSpacing">
+            <summary>
+            The spacing between children and parent in pixels.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.HighlightOnHover">
+            <summary>
+            Enable or disable highlight on hover.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.ContainerClassName">
+            <summary>
+            The class name for the root container.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CanvasStyle">
+            <summary>
+            The CSS styles to apply to the canvas root container.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EnableToolbar">
+            <summary>
+            Enable or disable graph toolbar.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EnableExpandCollapse">
+            <summary>
+            Enables expanding and collapsing nodes.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EnableTooltip">
+            <summary>
+            Enable tooltip on hover of nodes.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.NodeTemplate">
+             <summary>
+             A function that returns the HTML template for nodes. Example:
+            
+             <code>
+             (content) => { return `&lt;div style='display: flex; justify-content: center; align-items: center; text-align: center; height: 100%;'&gt;${content}&lt;/div&gt;`; }
+             </code>
+             </summary>
+             <remarks>
+             The function will receive a parameter containing a single item from the collection.
+             </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.TooltipTemplate">
+             <summary>
+             A function that returns the HTML template for tooltip. Example:
+            
+             <code>
+             (content) => { return `&lt;div style='display: flex; justify-content: center; align-items: center; text-align: center; height: 100%;'&gt;${content}&lt;/div&gt;`; }
+             </code>
+             </summary>
+             <remarks>
+             The function will receive a string parameter for the provided content.
+             </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.NodeWidth">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.NodeHeight">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.NodeBGColor">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.NodeBGColorHover">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.BorderWidth">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.BorderStyle">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.BorderRadius">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.BorderColor">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.BorderColorHover">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EdgeColor">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EdgeColorHover">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.TooltipId">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.TooltipBorderColor">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.TooltipBGColor">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.TooltipMaxWidth">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.FontSize">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.FontWeight">
+            <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.FontColor">
+            <inheritdoc />
+        </member>
+        <member name="T:ApexTree.ImageDataNode">
+            <summary>
+            Implementation of data node for name-URL pairs.
+            </summary>
+        </member>
+        <member name="T:ApexTree.StringDataNode">
+            <summary>
+            Implementation of data node for simple string data.
+            </summary>
+        </member>
+        <member name="T:ApexTree.DataNode`1">
+            <summary>
+            Defines properties required for each node to display in the tree.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNode`1.Id">
+            <summary>
+            The HTML element id for this node.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNode`1.Data">
+            <summary>
+            The content to display in this node.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNode`1.Options">
+            <summary>
+            Configuration specific to this node.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNode`1.Children">
+            <summary>
+            Items to display below this node.
+            </summary>
+        </member>
+        <member name="M:ApexTree.DataNode`1.AddChild(`0)">
+            <summary>
+            Adds a child item to this node and returns it.
+            </summary>
+            <param name="data">The data value for the child.</param>
+        </member>
+        <member name="M:ApexTree.DataNode`1.AddChild(System.String,`0)">
+            <summary>
+            Adds a child item to this node and returns it.
+            </summary>
+            <param name="id">The id value for the child.</param>
+            <param name="data">The data value for the child.</param>
+        </member>
+        <member name="M:ApexTree.DataNode`1.AddChild(System.String,`0,ApexTree.DataNodeOptions)">
+            <summary>
+            Adds a child item to this node and returns it.
+            </summary>
+            <param name="id">The id value for the child.</param>
+            <param name="data">The data value for the child.</param>
+            <param name="options">The options value for the child.</param>
+        </member>
+        <member name="M:ApexTree.DataNode`1.AddChild(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Adds a collection of child items to this node and returns them.
+            </summary>
+            <param name="data">The child items to add.</param>
+        </member>
+        <member name="M:ApexTree.DataNode`1.AddChild(System.Collections.Generic.IEnumerable{`0},ApexTree.DataNodeOptions)">
+            <summary>
+            Adds a collection of child items to this node and returns them.
+            </summary>
+            <param name="data">The child items to add.</param>
+            <param name="options">The options value for the children.</param>
+        </member>
+        <member name="T:ApexTree.DataNodeOptions">
+             <summary>
+             Configures options specific to an individual data node.
+             </summary>
+             <remarks>
+             Links:
+            
+             <see href="https://apexcharts.com/apextree/docs/options">JavaScript Documentation</see>.
+             </remarks>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.NodeWidth">
+            <summary>
+            The width of the graph node in pixels.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.NodeHeight">
+            <summary>
+            The height of the graph node in pixels.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.NodeBGColor">
+            <summary>
+            The hex background color of the node.
+            </summary>
+            <remarks>
+            Prefix with '#'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.NodeBGColorHover">
+            <summary>
+            The hex background color on hover of the node.
+            </summary>
+            <remarks>
+            Prefix with '#'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.NodeStyle">
+            <summary>
+            The CSS styles to apply to the node.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.NodeClassName">
+            <summary>
+            The CSS classes to apply to the node.
+            </summary>
+            <remarks>
+            Undocumented property from source TypeScript.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.BorderWidth">
+            <summary>
+            The border width of the node in pixels.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.BorderStyle">
+            <summary>
+            The border style of the node.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.BorderRadius">
+            <summary>
+            The border radius of the node in pixels.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.BorderRadiusUnits">
+            <summary>
+            The measurement type to use for the <see cref="P:ApexTree.DataNodeOptions.BorderRadius"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.BorderColor">
+            <summary>
+            The hex border color of the node.
+            </summary>
+            <remarks>
+            Prefix with '#'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.BorderColorHover">
+            <summary>
+            The hex border color on hover of the node.
+            </summary>
+            <remarks>
+            Prefix with '#'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.EdgeWidth">
+            <summary>
+            The edge width of the node in pixels.
+            </summary>
+            <remarks>
+            Undocumented property from source TypeScript.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.EdgeColor">
+            <summary>
+            The hex color for the edge of the node.
+            </summary>
+            <remarks>
+            Prefix with '#'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.EdgeColorHover">
+            <summary>
+            The hex color for the edges when highlighted.
+            </summary>
+            <remarks>
+            Prefix with '#'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.TooltipId">
+            <summary>
+            The tooltip HTML element id.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.TooltipBorderColor">
+            <summary>
+            The hex border color of tooltip.
+            </summary>
+            <remarks>
+            Prefix with '#'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.TooltipBGColor">
+            <summary>
+            The hex background color of tooltip.
+            </summary>
+            <remarks>
+            Prefix with '#'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.TooltipMaxWidth">
+            <summary>
+            The max width of the tooltip in pixels.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.FontSize">
+            <summary>
+            The size of font of the node in pixels.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.FontSizeUnits">
+            <summary>
+            The measurement type to use for the <see cref="P:ApexTree.DataNodeOptions.FontSize"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.FontFamily">
+            <summary>
+            The font family of the node.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.FontWeight">
+            <summary>
+            The font weight (thickness of the typeface) of the node.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.FontColor">
+            <summary>
+            The hex font color of the node.
+            </summary>
+            <remarks>
+            Prefix with '#'.
+            </remarks>
+        </member>
+        <member name="T:ApexTree.Image">
+            <summary>
+            Defines properties required for loading images in the chart.
+            </summary>
+            <param name="Name">The name to display with the image.</param>
+            <param name="Url">The URL to get the image or base64 string containing the image data.</param>
+        </member>
+        <member name="M:ApexTree.Image.#ctor(System.String,System.String)">
+            <summary>
+            Defines properties required for loading images in the chart.
+            </summary>
+            <param name="Name">The name to display with the image.</param>
+            <param name="Url">The URL to get the image or base64 string containing the image data.</param>
+        </member>
+        <member name="P:ApexTree.Image.Name">
+            <summary>The name to display with the image.</summary>
+        </member>
+        <member name="P:ApexTree.Image.Url">
+            <summary>The URL to get the image or base64 string containing the image data.</summary>
+        </member>
+        <member name="T:ApexTree.GeneralExtensions">
+            <summary>
+            Extension methods for use in Blazor components.
+            </summary>
+        </member>
+        <member name="M:ApexTree.GeneralExtensions.ToHtmlId(System.Guid)">
+            <summary>
+            Returns a GUID that always starts with a letter to be used as an HTML element ID.
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:ApexTree.GeneralExtensions.CloneSerializerOptions(System.Text.Json.JsonSerializerOptions,System.Boolean)">
+            <summary>
+            Clones the provided serializer options.
+            </summary>
+            <param name="value">The value to clone.</param>
+            <param name="includeConverters">Specifies whether to include converters in the returned object.</param>
+        </member>
+    </members>
+</doc>

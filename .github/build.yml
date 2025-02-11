@@ -29,6 +29,5 @@ jobs:
       run: dotnet restore
       working-directory: ./Blazor-ApexTree
     - name: Build
-      run: |
-        dotnet build --configuration Release
+      run: dotnet build --configuration Release
       working-directory: ./Blazor-ApexTree
