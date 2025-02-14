@@ -14,11 +14,6 @@ namespace ApexTree;
 public class ApexTreeOptions : DataNodeOptions
 {
 	/// <summary>
-	/// The HTML id attribute for the chart.
-	/// </summary>
-	public string Id { get; set; } = Guid.NewGuid().ToHtmlId().ToString("N");
-
-	/// <summary>
 	/// Enables debug mode when true.
 	/// </summary>
 	public bool Debug { get; set; }

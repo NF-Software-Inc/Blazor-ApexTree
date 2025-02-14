@@ -29,6 +29,7 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
 	[Inject]
 	private IJSRuntime JsRuntime { get; init; } = default!;
 
+    private readonly string Id = Guid.NewGuid().ToHtmlId().ToString("N");
     private static bool IsLibraryLoaded;
     private bool IsChartLoaded;
     private bool ParentSet;
@@ -53,10 +54,10 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
 
         if (IsLibraryLoaded && IsChartLoaded == false && ParentSet)
         {
-            await JsRuntime.InvokeVoidAsync("blazorApextree.CreateChart", ChartContainer, JsonSerializer.Serialize(Options, ChartSerializer.DefaultOptions), JsonSerializer.Serialize(Parent, ChartSerializer.DefaultOptions));
-
-            IsChartLoaded = true;
             ParentSet = false;
+            IsChartLoaded = true;
+
+            await JsRuntime.InvokeVoidAsync("blazorApextree.CreateChart", ChartContainer, Id, JsonSerializer.Serialize(Options, ChartSerializer.DefaultOptions), JsonSerializer.Serialize(Parent, ChartSerializer.DefaultOptions));
         }
     }
 
@@ -68,7 +69,7 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
             if (UnderlyingType == typeof(string))
                 Options.NodeTemplate = "(content) => { return `<div style='display: flex; justify-content: center; align-items: center; text-align: center; height: 100%;'>${content}</div>`; }";
             else if (UnderlyingType == typeof(Image))
-                Options.NodeTemplate = "(content) => { return `<div style='display: flex; flex-direction: column; gap: 10px; justify-content: center; align-items: center; height: 100%;'><img style='width: 50px; height: 50px; border-radius: 50%;' src='${content.url}' /><div>${content.name}</div></div>`; }";
+                Options.NodeTemplate = "(content) => { return `<div style='display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;'><img style='width: 50px; height: 50px; border-radius: 50%;' src='${content.url}' /><div>${content.name}</div></div>`; }";
             else
                 throw new ArgumentException("Must provide a node template when TItem is not string.", nameof(Options.NodeTemplate));
         }
@@ -89,7 +90,7 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     /// <param name="id">The HTML id of the node to collapse.</param>
     public async Task CollapseNode(string id)
 	{
-		await JsRuntime.InvokeVoidAsync("blazorApextree.CollapseNode", Options.Id, id);
+		await JsRuntime.InvokeVoidAsync("blazorApextree.CollapseNode", Id, id);
 	}
 
     /// <summary>
@@ -98,7 +99,7 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     /// <param name="id">he HTML id of the node to expand.</param>
     public async Task ExpandNode(string id)
 	{
-        await JsRuntime.InvokeVoidAsync("blazorApextree.ExpandNode", Options.Id, id);
+        await JsRuntime.InvokeVoidAsync("blazorApextree.ExpandNode", Id, id);
     }
 
     /// <summary>
@@ -107,7 +108,7 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     /// <param name="direction">The updated direction of the layout to apply.</param>
     public async Task ChangeLayout(Direction direction)
 	{
-        await JsRuntime.InvokeVoidAsync("blazorApextree.ChangeLayout", Options.Id, JsonSerializer.Serialize(direction, ChartSerializer.DefaultOptions));
+        await JsRuntime.InvokeVoidAsync("blazorApextree.ChangeLayout", Id, JsonSerializer.Serialize(direction, ChartSerializer.DefaultOptions));
     }
 
     /// <summary>
@@ -115,7 +116,7 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     /// </summary>
     public async Task FitScreen()
 	{
-        await JsRuntime.InvokeVoidAsync("blazorApextree.FitScreen", Options.Id);
+        await JsRuntime.InvokeVoidAsync("blazorApextree.FitScreen", Id);
     }
 
     /// <summary>
@@ -124,13 +125,22 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     /// <param name="keepOldPosition">Undocumented.</param>
     public async Task Render(bool keepOldPosition = false)
 	{
-        await JsRuntime.InvokeVoidAsync("blazorApextree.Render", Options.Id, keepOldPosition);
+        await JsRuntime.InvokeVoidAsync("blazorApextree.Render", Id, keepOldPosition);
+    }
+
+    /// <summary>
+    /// Destroys the chart and recreates it. Useful when the dataset or options have changed.
+    /// </summary>
+    public async Task RebuildChart()
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.DeleteChart", Id);
+        await JsRuntime.InvokeVoidAsync("blazorApextree.CreateChart", ChartContainer, Id, JsonSerializer.Serialize(Options, ChartSerializer.DefaultOptions), JsonSerializer.Serialize(Parent, ChartSerializer.DefaultOptions));
     }
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
         GC.SuppressFinalize(this);
-        await JsRuntime.InvokeVoidAsync("blazorApextree.DeleteChart", Options.Id);
+        await JsRuntime.InvokeVoidAsync("blazorApextree.DeleteChart", Id);
     }
 }

@@ -21,7 +21,7 @@ window.blazorApextree = {
      * @param {any} options The serialized options to use for the chart.
      * @param {any} data The serialized objects to use in the chart.
      */
-    CreateChart: function (container, options, data) {
+    CreateChart: function (container, id, options, data) {
         var parsed = this.Deserialize(options);
 
         if (parsed.debug === true)
@@ -30,10 +30,10 @@ window.blazorApextree = {
         var tree = new ApexTree(container, parsed);
         var graph = tree.render(this.Deserialize(data));
 
-        this.ChartReferences.set(parsed.id, graph);
+        this.ChartReferences.set(id, graph);
 
         if (parsed.debug === true) {
-            console.log(`Chart ${parsed.id} created.`);
+            console.log(`Chart ${id} created.`);
         }
     },
 
@@ -42,6 +42,11 @@ window.blazorApextree = {
      * @param {string} id The HTML id of the element the chart is attached to.
      */
     DeleteChart: function (id) {
+        var element = document.getElementById(id)
+
+        if (typeof (element) !== 'undefined')
+            element.replaceChildren();
+
         if (this.ChartReferences.has(id))
             this.ChartReferences.delete(id);
     },
