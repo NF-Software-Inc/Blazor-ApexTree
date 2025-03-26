@@ -57,7 +57,7 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
             ParentSet = false;
             IsChartLoaded = true;
 
-            await JsRuntime.InvokeVoidAsync("blazorApextree.CreateChart", ChartContainer, Id, JsonSerializer.Serialize(Options, ChartSerializer.DefaultOptions), JsonSerializer.Serialize(Parent, ChartSerializer.DefaultOptions));
+            await JsRuntime.InvokeVoidAsync("blazorApextree.CreateChart", ChartContainer, Id, JsonSerializer.Serialize(Options, ChartSerializer.DefaultOptions), Parent);
         }
     }
 
