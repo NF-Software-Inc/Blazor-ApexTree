@@ -2,57 +2,61 @@
 
 name: publish
 on:
-  workflow_dispatch:
-  release:
-    types: [ published ]
-
-env:
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-  DOTNET_NOLOGO: true
-  NuGetDirectory: ${{ github.workspace }}/nuget
-  PublishVersion: ${{ github.event.release.tag_name }}.${{ github.run_number }}
-
-defaults:
-  run:
-    shell: pwsh
+    workflow_dispatch:
+      inputs:
+        targets:
+          description: Targets
+          required: true
+          type: string
+        version:
+          description: Version
+          required: true
+          type: string
+        build:
+          description: Build
+          type: string
+        deploy:
+          description: Deploy
+          required: true
+          type: boolean
+          default: false
+    release:
+      types: [ published ]
 
 jobs:
-  package:
-    runs-on: ubuntu-24.04
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      Targets: ${{ steps.set-values.outputs.Targets }}
+      Version: ${{ steps.set-values.outputs.Version }}
+      Build: ${{ steps.set-values.outputs.Build }}
+      Deploy: ${{ steps.set-values.outputs.Deploy }}
+    defaults:
+      run:
+        shell: bash
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-    - name: Install dependencies
-      run: dotnet restore
-      working-directory: ./Blazor-ApexTree
-    - name: Build
-      run: |
-        dotnet build --configuration Release
-        dotnet pack --configuration Release --output ${{ env.NuGetDirectory }} /p:AssemblyVersion=${{ env.PublishVersion }} /p:Version=${{ github.event.release.tag_name }} /p:FileVersion=${{ env.PublishVersion }}
-      working-directory: ./Blazor-ApexTree
-    - uses: actions/upload-artifact@v4
-      with:
-        name: nuget
-        if-no-files-found: error
-        retention-days: 7
-        path: ${{ env.NuGetDirectory }}/*.nupkg
-  deploy:
-    if: github.event_name == 'release'
-    runs-on: ubuntu-24.04
-    needs: [ package ]
-    steps:
-      - run: exit 0 # Currently disabled due to code signing requirements
-      - uses: actions/download-artifact@v4
-        with:
-          name: nuget
-          path: ${{ env.NuGetDirectory }}
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
-      - name: Publish NuGet package
-        run: dotnet nuget push ${{ env.NuGetDirectory }}/*.nupkg --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
-        
+      - name: Update Environment Variables
+        id: set-values
+        run: |
+          if [[ '${{ github.event_name }}' == 'workflow_dispatch' ]]; then
+            echo "Targets=${{ github.event.inputs.targets }}" >> "$GITHUB_OUTPUT"
+            echo "Version=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+            echo "Build=${{ github.event.inputs.build || github.run_number }}" >> "$GITHUB_OUTPUT"
+            echo "Deploy=${{ github.event.inputs.deploy }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "Targets=${{ github.event.release.name }}" >> "$GITHUB_OUTPUT"
+            echo "Version=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
+            echo "Build=${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+            echo "Deploy=${{ github.event_name == 'release' }}" >> "$GITHUB_OUTPUT"
+          fi
+  nuget:
+    needs: [ prepare ]
+    if: ${{ contains(needs.prepare.outputs.Targets, 'All') || contains(needs.prepare.outputs.Targets, 'NuGet') }}
+    permissions:
+      contents: write
+    uses: ./.github/workflows/publish-nuget.yml
+    with:
+      build: ${{ needs.prepare.outputs.Build }}
+      version: ${{ needs.prepare.outputs.Version }}
+      deploy: ${{ needs.prepare.outputs.Deploy == 'true' }}
+    secrets: inherit

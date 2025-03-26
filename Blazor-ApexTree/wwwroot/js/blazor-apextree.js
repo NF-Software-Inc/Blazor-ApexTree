@@ -1,4 +1,4 @@
-﻿import ApexTree from './apextree.esm.js?ver=1.3.0'
+﻿import ApexTree from './apextree.esm.js?ver=1.3.0';
 
 /**
  * Export function for Blazor to point to the window.blazor_apextree.
@@ -28,7 +28,7 @@ window.blazorApextree = {
             console.log(parsed);
 
         var tree = new ApexTree(container, parsed);
-        var graph = tree.render(this.Deserialize(data));
+        var graph = tree.render(data);
 
         this.ChartReferences.set(id, graph);
 
