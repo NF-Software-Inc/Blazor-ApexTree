@@ -2,6 +2,8 @@
 
 [![MIT](https://img.shields.io/github/license/NF-Software-Inc/Blazor-ApexTree)](https://github.com/NF-Software-Inc/Blazor-ApexTree/blob/master/LICENSE)
 [![NuGet](https://img.shields.io/nuget/v/Blazor-ApexTree.svg)](https://www.nuget.org/packages/Blazor-ApexTree/)
+[![Build](https://img.shields.io/github/actions/workflow/status/NF-Software-Inc/Blazor-ApexTree/build.yml)](https://github.com/NF-Software-Inc/Blazor-ApexTree/actions/workflows/build.yml)
+[![Publish](https://img.shields.io/github/actions/workflow/status/NF-Software-Inc/Blazor-ApexTree/publish.yml?label=publish)](https://github.com/NF-Software-Inc/Blazor-ApexTree/actions/workflows/publish.yml)
 
 ## Getting Started
 
