@@ -5,6 +5,12 @@
 [![Build](https://img.shields.io/github/actions/workflow/status/NF-Software-Inc/Blazor-ApexTree/build.yml)](https://github.com/NF-Software-Inc/Blazor-ApexTree/actions/workflows/build.yml)
 [![Publish](https://img.shields.io/github/actions/workflow/status/NF-Software-Inc/Blazor-ApexTree/publish.yml?label=publish)](https://github.com/NF-Software-Inc/Blazor-ApexTree/actions/workflows/publish.yml)
 
+## Versioning Notice
+
+As of version 10.0.0, Blazor-ApexTree has adopted a new versioning scheme that aligns its major version with the .NET major version it targets. This change is intended to provide better clarity and consistency with regard to supported frameworks.
+
+Going forward, the major version of Blazor-ApexTree will correspond to the major version of .NET it targets (e.g., Blazor-ApexTree 10.x.x targets .NET 10). The minor and patch versions are used for library-specific updates and do not map to .NET's minor or SDK versions.
+
 ## Getting Started
 
 This library provides a blazor wrapper for [ApexTree.js](https://apexcharts.com/apextree/). 
@@ -25,6 +31,8 @@ To use this library:
 ### Frameworks
 
 - .NET 8.0
+- .NET 9.0
+- .NET 10.0
 
 ## Authors
 
