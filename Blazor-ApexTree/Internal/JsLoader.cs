@@ -6,7 +6,7 @@ internal static class JsLoader
 {
 	internal static async Task<IJSObjectReference> LoadAsync(IJSRuntime jsRuntime, string? path = null)
 	{
-		var javascriptPath = "./_content/Blazor-ApexTree/js/blazor-apextree.js?ver=1.0.2";
+		var javascriptPath = "./_content/Blazor-ApexTree/js/blazor-apextree.js?ver=10.0.0";
 
 		if (string.IsNullOrWhiteSpace(path) == false)
 			javascriptPath = path;
