@@ -1,0 +1,9 @@
+﻿@page "/basic"
+@inherits ComponentBase
+
+<TitleBlock Title="Basic Tree" UpdatePageTitle="true" />
+
+@if (ParentNode != null)
+{
+    <ApexTree Parent="ParentNode" Options="Options" />
+}

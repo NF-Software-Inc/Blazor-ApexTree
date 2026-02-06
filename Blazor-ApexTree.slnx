@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="Blazor-ApexTree-Demo/Blazor-ApexTree-Demo.csproj" Id="010e9577-ce76-4481-adb2-a3b1f77bdee3" />
   <Project Path="Blazor-ApexTree/Blazor-ApexTree.csproj" />
 </Solution>
