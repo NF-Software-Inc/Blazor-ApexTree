@@ -1,0 +1,37 @@
+@page "/dynamic-view"
+@inherits ComponentBase
+
+<TitleBlock Title="Dynamic View Change" UpdatePageTitle="true" />
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Dynamic View Change</h1>
+        <p class="subtitle is-6">Switch the tree layout direction dynamically. Current: <strong>@CurrentDirection</strong></p>
+
+        <div class="buttons mb-4">
+            <button class="button is-link @(CurrentDirection == Direction.Top ? "" : "is-outlined")" @onclick="() => ChangeDirection(Direction.Top)">
+                <span class="material-icons icon mr-1">arrow_upward</span>
+                <span>Top to Bottom</span>
+            </button>
+            <button class="button is-link @(CurrentDirection == Direction.Bottom ? "" : "is-outlined")" @onclick="() => ChangeDirection(Direction.Bottom)">
+                <span class="material-icons icon mr-1">arrow_downward</span>
+                <span>Bottom to Top</span>
+            </button>
+            <button class="button is-link @(CurrentDirection == Direction.Left ? "" : "is-outlined")" @onclick="() => ChangeDirection(Direction.Left)">
+                <span class="material-icons icon mr-1">arrow_back</span>
+                <span>Left to Right</span>
+            </button>
+            <button class="button is-link @(CurrentDirection == Direction.Right ? "" : "is-outlined")" @onclick="() => ChangeDirection(Direction.Right)">
+                <span class="material-icons icon mr-1">arrow_forward</span>
+                <span>Right to Left</span>
+            </button>
+        </div>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree @ref="TreeRef" TItem="string" Parent="ParentNode" Options="Options" />
+            }
+        </div>
+    </div>
+</section>

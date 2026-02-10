@@ -1,0 +1,32 @@
+@page "/node-click"
+@inherits ComponentBase
+
+<TitleBlock Title="Node Click Event" UpdatePageTitle="true" />
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Node Click Event</h1>
+        <p class="subtitle is-6">Click on any node to see its information. Uses the OnNodeClick callback.</p>
+
+        <div class="notification is-info is-light mb-4">
+            <div class="columns">
+                <div class="column">
+                    <p><strong>Last Clicked Node ID:</strong> @(ClickedNodeId ?? "None - click a node!")</p>
+                </div>
+                <div class="column">
+                    <p><strong>Node Data:</strong> @(ClickedNodeData ?? "—")</p>
+                </div>
+                <div class="column is-narrow">
+                    <p><strong>Total Clicks:</strong> @ClickCount</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree TItem="string" Parent="ParentNode" Options="Options" OnNodeClick="HandleNodeClick" />
+            }
+        </div>
+    </div>
+</section>

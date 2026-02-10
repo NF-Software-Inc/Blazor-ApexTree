@@ -1,13 +1,35 @@
-﻿@page "/"
+@page "/"
 @inherits ComponentBase
 
-<TitleBlock Title="View Examples" UpdatePageTitle="true" />
-
-<div class="columns is-1 is-variable is-multiline">
-    <div class="column is-6-desktop is-4-fullhd is-2-4k">
-        <button type="button" class="button is-fullwidth is-link py-5 m-2">
-            <span class="material-icons icon">account_tree</span>
-            <span>Basic Tree</span>
-        </button>
+<section class="section">
+    <div class="container">
+        <h2 class="title is-4 mb-5">Examples</h2>
+        <div class="columns is-multiline">
+            @foreach (var example in Examples)
+            {
+                <div class="column is-4-desktop is-6-tablet">
+                    <div class="card" style="height: 100%;">
+                        <div class="card-content">
+                            <div class="media mb-3">
+                                <div class="media-left">
+                                    <span class="icon is-large has-text-link">
+                                        <span class="material-icons md-36">@example.Icon</span>
+                                    </span>
+                                </div>
+                                <div class="media-content">
+                                    <p class="title is-5 mb-0">@example.Title</p>
+                                </div>
+                            </div>
+                            <div class="content">
+                                @example.Description
+                            </div>
+                        </div>
+                        <footer class="card-footer">
+                            <a href="@example.Url" class="card-footer-item has-text-link has-text-weight-semibold">View Example</a>
+                        </footer>
+                    </div>
+                </div>
+            }
+        </div>
     </div>
-</div>
+</section>
