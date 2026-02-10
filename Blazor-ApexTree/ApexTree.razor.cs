@@ -1,4 +1,4 @@
-﻿using ApexTree.Internal;
+using ApexTree.Internal;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Text.Json;
@@ -26,6 +26,12 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     [Parameter]
 	public ApexTreeOptions Options { get; set; } = new ApexTreeOptions();
 
+    /// <summary>
+    /// Callback invoked when a node in the tree is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback<NodeClickEventArgs> OnNodeClick { get; set; }
+
 	[Inject]
 	private IJSRuntime JsRuntime { get; init; } = default!;
 
@@ -36,6 +42,7 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
 
     private Type UnderlyingType = typeof(string);
     private ElementReference ChartContainer;
+    private DotNetObjectReference<ApexTree<TItem>>? _dotNetRef;
 
     /// <inheritdoc/>
     protected override void OnInitialized()
@@ -57,7 +64,9 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
             ParentSet = false;
             IsChartLoaded = true;
 
-            await JsRuntime.InvokeVoidAsync("blazorApextree.CreateChart", ChartContainer, Id, JsonSerializer.Serialize(Options, ChartSerializer.DefaultOptions), Parent);
+            _dotNetRef = DotNetObjectReference.Create(this);
+
+            await JsRuntime.InvokeVoidAsync("blazorApextree.CreateChart", ChartContainer, Id, JsonSerializer.Serialize(Options, ChartSerializer.DefaultOptions), Parent, _dotNetRef);
         }
     }
 
@@ -82,6 +91,19 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
             ParentSet = true;
 
         await base.SetParametersAsync(parameters);
+    }
+
+    /// <summary>
+    /// Called from JavaScript when a tree node is clicked.
+    /// </summary>
+    /// <param name="nodeId">The ID of the clicked node.</param>
+    [JSInvokable]
+    public async Task OnNodeClicked(string nodeId)
+    {
+        if (OnNodeClick.HasDelegate)
+        {
+            await OnNodeClick.InvokeAsync(new NodeClickEventArgs { NodeId = nodeId });
+        }
     }
 
     /// <summary>
@@ -134,7 +156,11 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     public async Task RebuildChart()
     {
         await JsRuntime.InvokeVoidAsync("blazorApextree.DeleteChart", Id);
-        await JsRuntime.InvokeVoidAsync("blazorApextree.CreateChart", ChartContainer, Id, JsonSerializer.Serialize(Options, ChartSerializer.DefaultOptions), JsonSerializer.Serialize(Parent, ChartSerializer.DefaultOptions));
+
+        _dotNetRef?.Dispose();
+        _dotNetRef = DotNetObjectReference.Create(this);
+
+        await JsRuntime.InvokeVoidAsync("blazorApextree.CreateChart", ChartContainer, Id, JsonSerializer.Serialize(Options, ChartSerializer.DefaultOptions), JsonSerializer.Serialize(Parent, ChartSerializer.DefaultOptions), _dotNetRef);
     }
 
     /// <inheritdoc />
@@ -142,5 +168,6 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     {
         GC.SuppressFinalize(this);
         await JsRuntime.InvokeVoidAsync("blazorApextree.DeleteChart", Id);
+        _dotNetRef?.Dispose();
     }
 }

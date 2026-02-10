@@ -1,4 +1,4 @@
-﻿import ApexTree from './apextree.esm.js?ver=1.3.0';
+import ApexTree from './apextree.esm.js?ver=1.3.0';
 
 /**
  * Export function for Blazor to point to the window.blazor_apextree.
@@ -16,12 +16,19 @@ window.blazorApextree = {
     ChartReferences: new Map(),
 
     /**
+     * Stores .NET object references for callbacks.
+     */
+    DotNetReferences: new Map(),
+
+    /**
      * Creates an Apex Tree chart on the specified element.
      * @param {any} container A reference to the HTML element to create the chart on.
+     * @param {string} id The HTML id of the element.
      * @param {any} options The serialized options to use for the chart.
      * @param {any} data The serialized objects to use in the chart.
+     * @param {any} dotNetRef The .NET object reference for callbacks.
      */
-    CreateChart: function (container, id, options, data) {
+    CreateChart: function (container, id, options, data, dotNetRef) {
         var parsed = this.Deserialize(options);
 
         if (parsed.debug === true)
@@ -31,6 +38,22 @@ window.blazorApextree = {
         var graph = tree.render(data);
 
         this.ChartReferences.set(id, graph);
+
+        if (dotNetRef) {
+            this.DotNetReferences.set(id, dotNetRef);
+
+            container.addEventListener('click', function (event) {
+                var el = event.target;
+
+                while (el && el !== container) {
+                    if (el.id && el.id.length > 0) {
+                        dotNetRef.invokeMethodAsync('OnNodeClicked', el.id);
+                        return;
+                    }
+                    el = el.parentElement;
+                }
+            });
+        }
 
         if (parsed.debug === true) {
             console.log(`Chart ${id} created.`);
@@ -49,6 +72,9 @@ window.blazorApextree = {
 
         if (this.ChartReferences.has(id))
             this.ChartReferences.delete(id);
+
+        if (this.DotNetReferences.has(id))
+            this.DotNetReferences.delete(id);
     },
 
     /**
