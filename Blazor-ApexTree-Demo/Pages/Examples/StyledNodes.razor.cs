@@ -25,6 +25,7 @@ public partial class StyledNodes : ComponentBase
 	private static readonly DataNodeOptions CeoStyle = new()
 	{
 		NodeBGColor = "#E3F2FD",
+		NodeBGColorHover = "#BBDEFB",
 		BorderColor = "#1565C0",
 		BorderColorHover = "#0D47A1",
 		BorderWidth = 2,
@@ -35,6 +36,7 @@ public partial class StyledNodes : ComponentBase
 	private static readonly DataNodeOptions EngineeringStyle = new()
 	{
 		NodeBGColor = "#E8F5E9",
+		NodeBGColorHover = "#C8E6C9",
 		BorderColor = "#2E7D32",
 		BorderColorHover = "#1B5E20",
 		FontColor = "#2E7D32",
@@ -43,6 +45,7 @@ public partial class StyledNodes : ComponentBase
 	private static readonly DataNodeOptions MarketingStyle = new()
 	{
 		NodeBGColor = "#FFF3E0",
+		NodeBGColorHover = "#FFE0B2",
 		BorderColor = "#E65100",
 		BorderColorHover = "#BF360C",
 		FontColor = "#E65100",
@@ -51,6 +54,7 @@ public partial class StyledNodes : ComponentBase
 	private static readonly DataNodeOptions HrStyle = new()
 	{
 		NodeBGColor = "#F3E5F5",
+		NodeBGColorHover = "#E1BEE7",
 		BorderColor = "#7B1FA2",
 		BorderColorHover = "#4A148C",
 		FontColor = "#7B1FA2",
@@ -59,6 +63,7 @@ public partial class StyledNodes : ComponentBase
 	private static readonly DataNodeOptions FinanceStyle = new()
 	{
 		NodeBGColor = "#FCE4EC",
+		NodeBGColorHover = "#F8BBD0",
 		BorderColor = "#C62828",
 		BorderColorHover = "#B71C1C",
 		FontColor = "#C62828",

@@ -4,14 +4,32 @@ using Microsoft.AspNetCore.Components;
 namespace Blazor_ApexTree_Demo.Pages.Examples;
 
 /// <summary>
-/// Demonstrates the OnNodeClick event callback for handling click events on tree nodes.
+/// Demonstrates event callbacks: OnNodeClick, OnNodeHover, OnNodeExpand, and OnNodeCollapse.
 /// </summary>
 public partial class NodeClick : ComponentBase
 {
 	private DataNode<string>? ParentNode;
-	private string? ClickedNodeId;
-	private string? ClickedNodeData;
+	
+	// Click event tracking
+	private string? LastClickedNode;
+	private string? LastClickedData;
 	private int ClickCount;
+	
+	// Hover event tracking
+	private string? LastHoveredNode;
+	private string? LastHoveredData;
+	private int HoverCount;
+	
+	// Expand event tracking
+	private string? LastExpandedNode;
+	private string? LastExpandedData;
+	private int ExpandCount;
+	
+	// Collapse event tracking
+	private string? LastCollapsedNode;
+	private string? LastCollapsedData;
+	private int CollapseCount;
+	
 	private readonly Dictionary<string, string> NodeDataMap = [];
 
 	private readonly ApexTreeOptions Options = new()
@@ -83,10 +101,54 @@ public partial class NodeClick : ComponentBase
 		}
 	}
 
+	/// <summary>
+	/// Extracts the original node ID from the ApexTree-generated ID.
+	/// ApexTree adds prefixes/suffixes to node IDs, so we need to find the original ID.
+	/// </summary>
+	private string? ExtractNodeData(string? nodeId)
+	{
+		if (string.IsNullOrEmpty(nodeId))
+			return "Unknown";
+
+		// Try direct lookup first
+		if (NodeDataMap.TryGetValue(nodeId, out var data))
+			return data;
+
+		// ApexTree may add prefixes/suffixes, so check if our ID is contained in the nodeId
+		foreach (var kvp in NodeDataMap)
+		{
+			if (nodeId.Contains(kvp.Key))
+				return kvp.Value;
+		}
+
+		return "Unknown";
+	}
+
 	private void HandleNodeClick(NodeClickEventArgs args)
 	{
-		ClickedNodeId = args.NodeId;
-		ClickedNodeData = NodeDataMap.GetValueOrDefault(args.NodeId ?? "", "Unknown");
+		LastClickedNode = args.NodeId;
+		LastClickedData = ExtractNodeData(args.NodeId);
 		ClickCount++;
+	}
+
+	private void HandleNodeHover(NodeHoverEventArgs args)
+	{
+		LastHoveredNode = args.NodeId;
+		LastHoveredData = ExtractNodeData(args.NodeId);
+		HoverCount++;
+	}
+
+	private void HandleNodeExpand(NodeExpandEventArgs args)
+	{
+		LastExpandedNode = args.NodeId;
+		LastExpandedData = ExtractNodeData(args.NodeId);
+		ExpandCount++;
+	}
+
+	private void HandleNodeCollapse(NodeCollapseEventArgs args)
+	{
+		LastCollapsedNode = args.NodeId;
+		LastCollapsedData = ExtractNodeData(args.NodeId);
+		CollapseCount++;
 	}
 }
