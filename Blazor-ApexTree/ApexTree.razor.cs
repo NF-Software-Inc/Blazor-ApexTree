@@ -32,11 +32,30 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     [Parameter]
     public EventCallback<NodeClickEventArgs> OnNodeClick { get; set; }
 
+    /// <summary>
+    /// Callback invoked when a node in the tree is hovered.
+    /// </summary>
+    [Parameter]
+    public EventCallback<NodeHoverEventArgs> OnNodeHover { get; set; }
+
+    /// <summary>
+    /// Callback invoked when a node in the tree is expanded.
+    /// </summary>
+    [Parameter]
+    public EventCallback<NodeExpandEventArgs> OnNodeExpand { get; set; }
+
+    /// <summary>
+    /// Callback invoked when a node in the tree is collapsed.
+    /// </summary>
+    [Parameter]
+    public EventCallback<NodeCollapseEventArgs> OnNodeCollapse { get; set; }
+
 	[Inject]
 	private IJSRuntime JsRuntime { get; init; } = default!;
 
     private readonly string Id = Guid.NewGuid().ToHtmlId().ToString("N");
     private static bool IsLibraryLoaded;
+    private static bool IsLicenseSet;
     private bool IsChartLoaded;
     private bool ParentSet;
 
@@ -57,6 +76,20 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
         {
             _ = await JsLoader.LoadAsync(JsRuntime);
             IsLibraryLoaded = true;
+
+            // Set license if configured and not already set
+            if (ApexTreeLicense.HasLicense && !IsLicenseSet)
+            {
+                try
+                {
+                    await JsRuntime.InvokeVoidAsync("blazorApextree.SetLicense", ApexTreeLicense.LicenseKey);
+                    IsLicenseSet = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error setting ApexTree license: {ex.Message}");
+                }
+            }
         }
 
         if (IsLibraryLoaded && IsChartLoaded == false && ParentSet)
@@ -102,7 +135,62 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     {
         if (OnNodeClick.HasDelegate)
         {
-            await OnNodeClick.InvokeAsync(new NodeClickEventArgs { NodeId = nodeId });
+            await OnNodeClick.InvokeAsync(new NodeClickEventArgs 
+            { 
+                NodeId = nodeId,
+                Timestamp = DateTime.UtcNow
+            });
+        }
+    }
+
+    /// <summary>
+    /// Called from JavaScript when a tree node is hovered.
+    /// </summary>
+    /// <param name="nodeId">The ID of the hovered node.</param>
+    [JSInvokable]
+    public async Task OnNodeHovered(string nodeId)
+    {
+        if (OnNodeHover.HasDelegate)
+        {
+            await OnNodeHover.InvokeAsync(new NodeHoverEventArgs 
+            { 
+                NodeId = nodeId,
+                Timestamp = DateTime.UtcNow
+            });
+        }
+    }
+
+    /// <summary>
+    /// Called from JavaScript when a tree node is expanded.
+    /// </summary>
+    /// <param name="nodeId">The ID of the expanded node.</param>
+    [JSInvokable]
+    public async Task OnNodeExpanded(string nodeId)
+    {
+        if (OnNodeExpand.HasDelegate)
+        {
+            await OnNodeExpand.InvokeAsync(new NodeExpandEventArgs 
+            { 
+                NodeId = nodeId,
+                Timestamp = DateTime.UtcNow
+            });
+        }
+    }
+
+    /// <summary>
+    /// Called from JavaScript when a tree node is collapsed.
+    /// </summary>
+    /// <param name="nodeId">The ID of the collapsed node.</param>
+    [JSInvokable]
+    public async Task OnNodeCollapsed(string nodeId)
+    {
+        if (OnNodeCollapse.HasDelegate)
+        {
+            await OnNodeCollapse.InvokeAsync(new NodeCollapseEventArgs 
+            { 
+                NodeId = nodeId,
+                Timestamp = DateTime.UtcNow
+            });
         }
     }
 
@@ -161,6 +249,22 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
         _dotNetRef = DotNetObjectReference.Create(this);
 
         await JsRuntime.InvokeVoidAsync("blazorApextree.CreateChart", ChartContainer, Id, JsonSerializer.Serialize(Options, ChartSerializer.DefaultOptions), JsonSerializer.Serialize(Parent, ChartSerializer.DefaultOptions), _dotNetRef);
+    }
+
+    /// <summary>
+    /// Gets the width CSS value from Options.
+    /// </summary>
+    private string GetWidth()
+    {
+        return ChartSerializer.GetMeasurement(Options.Width, Options.WidthUnits, true) ?? "400px";
+    }
+
+    /// <summary>
+    /// Gets the height CSS value from Options.
+    /// </summary>
+    private string GetHeight()
+    {
+        return ChartSerializer.GetMeasurement(Options.Height, Options.HeightUnits, false) ?? "400px";
     }
 
     /// <inheritdoc />

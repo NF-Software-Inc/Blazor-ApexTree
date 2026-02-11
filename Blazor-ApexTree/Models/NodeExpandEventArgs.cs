@@ -1,12 +1,12 @@
 namespace ApexTree;
 
 /// <summary>
-/// Provides data for the node click event.
+/// Provides data for the node expand event.
 /// </summary>
-public class NodeClickEventArgs
+public class NodeExpandEventArgs
 {
 	/// <summary>
-	/// The ID of the clicked node, matching <see cref="DataNode{TItem}.Id"/>.
+	/// The ID of the expanded node, matching <see cref="DataNode{TItem}.Id"/>.
 	/// </summary>
 	public string? NodeId { get; set; }
 

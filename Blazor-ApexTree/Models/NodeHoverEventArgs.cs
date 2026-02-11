@@ -1,12 +1,12 @@
 namespace ApexTree;
 
 /// <summary>
-/// Provides data for the node click event.
+/// Provides data for the node hover event.
 /// </summary>
-public class NodeClickEventArgs
+public class NodeHoverEventArgs
 {
 	/// <summary>
-	/// The ID of the clicked node, matching <see cref="DataNode{TItem}.Id"/>.
+	/// The ID of the hovered node, matching <see cref="DataNode{TItem}.Id"/>.
 	/// </summary>
 	public string? NodeId { get; set; }
 

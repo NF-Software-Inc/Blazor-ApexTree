@@ -13,7 +13,7 @@ public partial class Home : ComponentBase
 		new("Styled Nodes", "Per-node styling with different colors and borders for each department.", "palette", "/styled-nodes"),
 		new("Expand / Collapse", "Interactive expand and collapse controls with programmatic buttons.", "unfold_more", "/expand-collapse"),
 		new("Custom Tooltip", "Tooltips with custom HTML templates and styling options.", "chat_bubble_outline", "/custom-tooltip"),
-		new("Node Click Event", "Handle click events on tree nodes and display node information.", "mouse", "/node-click"),
+		new("Tree Events", "Handle all tree events: click, hover, expand, and collapse with real-time feedback.", "mouse", "/node-click"),
 		new("Dynamic View Change", "Switch the tree layout direction dynamically between all four orientations.", "swap_horiz", "/dynamic-view"),
 	];
 }
