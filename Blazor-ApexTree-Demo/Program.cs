@@ -1,3 +1,4 @@
+using ApexTree;
 using Blazor_ApexTree_Demo;
 using Easy_Logger.Providers;
 using Microsoft.AspNetCore.Components.Web;
@@ -17,5 +18,7 @@ builder.Logging.AddConsoleLogger(x =>
 	x.LogLevels = [LogLevel.Information, LogLevel.Warning, LogLevel.Error, LogLevel.Critical];
 });
 #endif
+
+//ApexTreeLicense.SetLicense("your-commercial-license-key-here");
 
 await builder.Build().RunAsync();
