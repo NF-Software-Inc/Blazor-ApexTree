@@ -10,9 +10,9 @@
 		<Authors>NF Software Inc.</Authors>
 		<Company>NF Software Inc.</Company>
 		<Copyright>Copyright 2025 $(Company)</Copyright>
-		<Version>10.0.0</Version>
-		<AssemblyVersion>10.0.0.0</AssemblyVersion>
-		<FileVersion>10.0.0.0</FileVersion>
+		<Version>10.1.0</Version>
+		<AssemblyVersion>10.1.0.0</AssemblyVersion>
+		<FileVersion>10.1.0.0</FileVersion>
 		<PackageId>Blazor-ApexTree</PackageId>
 		<PackageTags>Blazor Charts ApexTree Server WebAssembly</PackageTags>
 		<RepositoryUrl>https://github.com/NF-Software-Inc/Blazor-ApexTree</RepositoryUrl>
@@ -21,6 +21,8 @@
 			A Blazor wrapper for ApexTree.js.
 		</Description>
 		<PackageReleaseNotes>
+			10.1.0 Update licensing model, update ApexTree to 1.7.0, add event handlers
+
 			10.0.0 Add support for .NET 9 and .NET 10
 
 			1.0.2 Fix exception for large datasets on serialization
