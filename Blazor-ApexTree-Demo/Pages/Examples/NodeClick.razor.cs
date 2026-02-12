@@ -39,7 +39,7 @@ public partial class NodeClick : ComponentBase
 		Width = 100,
 		WidthUnits = LengthUnits.Percent,
 		Height = 60,
-		HeightUnits = LengthUnits.Viewport,
+		HeightUnits = LengthUnits.Viewport
 	};
 
 	/// <inheritdoc/>

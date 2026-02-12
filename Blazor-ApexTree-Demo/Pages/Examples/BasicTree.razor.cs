@@ -17,7 +17,7 @@ public partial class BasicTree : ComponentBase
 		Width = 100,
 		WidthUnits = LengthUnits.Percent,
 		Height = 70,
-		HeightUnits = LengthUnits.Viewport,
+		HeightUnits = LengthUnits.Viewport
 	};
 
 	/// <inheritdoc/>

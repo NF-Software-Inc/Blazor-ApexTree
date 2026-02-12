@@ -19,7 +19,7 @@ public partial class ExpandCollapse : ComponentBase
 		Width = 100,
 		WidthUnits = LengthUnits.Percent,
 		Height = 65,
-		HeightUnits = LengthUnits.Viewport,
+		HeightUnits = LengthUnits.Viewport
 	};
 
 	/// <inheritdoc/>

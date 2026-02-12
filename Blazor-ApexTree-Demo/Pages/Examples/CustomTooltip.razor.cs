@@ -18,7 +18,15 @@ public partial class CustomTooltip : ComponentBase
 		WidthUnits = LengthUnits.Percent,
 		Height = 70,
 		HeightUnits = LengthUnits.Viewport,
-		TooltipTemplate = "(content) => { return `<div style='padding: 10px; font-size: 13px;'><strong>${content}</strong><br/><span style='color: #666;'>Hover for details</span></div>`; }",
+		TooltipTemplate = 
+		"""
+			(content) => { 
+				return `<div style='padding: 10px; font-size: 13px;'>
+					<strong>${content}</strong><br/>
+					<span style='color: #666;'>Hover for details</span>
+					</div>`; 
+			}
+		""",
 		TooltipBGColor = "#FAFAFA",
 		TooltipBorderColor = "#5C6BC0",
 		TooltipFontColor = "#333333",
@@ -26,7 +34,7 @@ public partial class CustomTooltip : ComponentBase
 		TooltipMinWidth = 120,
 		TooltipMaxWidth = 250,
 		TooltipPadding = 0,
-		TooltipOffset = 12,
+		TooltipOffset = 12
 	};
 
 	/// <inheritdoc/>

@@ -21,7 +21,15 @@ public partial class CustomTemplate : ComponentBase
 		NodeWidth = 180,
 		NodeHeight = 100,
 		FontFamily = "Georgia, serif",
-		NodeTemplate = "(content) => { return `<div style='display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; padding: 8px; gap: 4px;'><img style='width: 44px; height: 44px; border-radius: 50%; border: 2px solid #5C6BC0;' src='${content.url}' /><div style='font-family: Georgia, serif; font-size: 13px; font-weight: 700; color: #333;'>${content.name}</div></div>`; }",
+		NodeTemplate = 
+		"""
+			(content) => { 
+				return `<div style='display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; padding: 8px; gap: 4px;'>
+					<img style='width: 44px; height: 44px; border-radius: 50%; border: 2px solid #5C6BC0;' src='${content.url}' />
+					<div style='font-family: Georgia, serif; font-size: 13px; font-weight: 700; color: #333;'>${content.name}</div>
+					</div>`; 
+			}
+		"""
 	};
 
 	/// <inheritdoc/>
