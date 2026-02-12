@@ -1,0 +1,18 @@
+@page "/custom-template"
+@inherits ComponentBase
+
+<PageTitle>Custom Template Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Custom Template with Custom Fonts</h1>
+        <p class="subtitle is-6">Demonstrates a custom nodeTemplate with different font families, image avatars, and role labels.</p>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree TItem="Image" Parent="ParentNode" Options="Options" />
+            }
+        </div>
+    </div>
+</section>

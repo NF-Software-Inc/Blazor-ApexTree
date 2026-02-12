@@ -1,9 +1,19 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
-<div>
+<div class="app-container">
     <NavMenu />
+    
+    <div class="main-wrapper">
+        <main role="main" class="main-content">
+            @Body
+        </main>
 
-    <main role="main" class="is-main-section" id="main-content-section">
-        @Body
-    </main>
+        <footer class="footer">
+            <div class="footer-content">
+                <p>
+                    <strong>Blazor ApexTree</strong> by <a target="_blank" href="https://apexcharts.com">ApexCharts</a>
+                </p>
+            </div>
+        </footer>
+    </div>
 </div>

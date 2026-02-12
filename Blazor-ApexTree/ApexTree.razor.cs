@@ -1,4 +1,4 @@
-﻿using ApexTree.Internal;
+using ApexTree.Internal;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Text.Json;
@@ -14,6 +14,7 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     /// <summary>
     /// The main node to display in the chart. Add all child items to this node.
     /// </summary>
+    [EditorRequired]
     [Parameter]
     public DataNode<TItem> Parent { get; set; }
 
@@ -26,19 +27,45 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     [Parameter]
 	public ApexTreeOptions Options { get; set; } = new ApexTreeOptions();
 
+    /// <summary>
+    /// Callback invoked when a node in the tree is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback<NodeClickEventArgs> OnNodeClick { get; set; }
+
+    /// <summary>
+    /// Callback invoked when a node in the tree is hovered.
+    /// </summary>
+    [Parameter]
+    public EventCallback<NodeHoverEventArgs> OnNodeHover { get; set; }
+
+    /// <summary>
+    /// Callback invoked when a node in the tree is expanded.
+    /// </summary>
+    [Parameter]
+    public EventCallback<NodeExpandEventArgs> OnNodeExpand { get; set; }
+
+    /// <summary>
+    /// Callback invoked when a node in the tree is collapsed.
+    /// </summary>
+    [Parameter]
+    public EventCallback<NodeCollapseEventArgs> OnNodeCollapse { get; set; }
+
 	[Inject]
 	private IJSRuntime JsRuntime { get; init; } = default!;
 
     private readonly string Id = Guid.NewGuid().ToHtmlId().ToString("N");
     private static bool IsLibraryLoaded;
+    private static bool IsLicenseSet;
     private bool IsChartLoaded;
     private bool ParentSet;
 
     private Type UnderlyingType = typeof(string);
     private ElementReference ChartContainer;
+	private JsHandler<TItem>? Handler;
 
-    /// <inheritdoc/>
-    protected override void OnInitialized()
+	/// <inheritdoc/>
+	protected override void OnInitialized()
     {
         UnderlyingType = Nullable.GetUnderlyingType(typeof(TItem)) ?? typeof(TItem);
     }
@@ -46,18 +73,35 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     /// <inheritdoc/>
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && IsLibraryLoaded == false)
+		// Load JavaScript library on first render
+		if (firstRender && IsLibraryLoaded == false)
         {
             _ = await JsLoader.LoadAsync(JsRuntime);
             IsLibraryLoaded = true;
-        }
+		}
 
-        if (IsLibraryLoaded && IsChartLoaded == false && ParentSet)
+		// Set license if configured and not already set
+		if (IsLibraryLoaded && ApexTreeLicense.HasLicense && !IsLicenseSet)
+		{
+			try
+			{
+				await JsRuntime.InvokeVoidAsync("blazorApextree.SetLicense", ApexTreeLicense.LicenseKey);
+				IsLicenseSet = true;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error setting ApexTree license: {ex.Message}");
+			}
+		}
+
+		// Create chart when library is loaded and parent node is set
+		if (IsLibraryLoaded && IsChartLoaded == false && ParentSet)
         {
             ParentSet = false;
             IsChartLoaded = true;
+			Handler = new JsHandler<TItem>(this);
 
-            await JsRuntime.InvokeVoidAsync("blazorApextree.CreateChart", ChartContainer, Id, JsonSerializer.Serialize(Options, ChartSerializer.DefaultOptions), Parent);
+			await JsRuntime.InvokeVoidAsync("blazorApextree.CreateChart", ChartContainer, Id, JsonSerializer.Serialize(Options, ChartSerializer.DefaultOptions), Parent, Handler.ObjectReference);
         }
     }
 
@@ -71,7 +115,7 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
             else if (UnderlyingType == typeof(Image))
                 Options.NodeTemplate = "(content) => { return `<div style='display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;'><img style='width: 50px; height: 50px; border-radius: 50%;' src='${content.url}' /><div>${content.name}</div></div>`; }";
             else
-                throw new ArgumentException("Must provide a node template when TItem is not string.", nameof(Options.NodeTemplate));
+                throw new ArgumentException("Must provide a node template when TItem is not string or Image.", nameof(Options.NodeTemplate));
         }
     }
 
@@ -134,7 +178,26 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     public async Task RebuildChart()
     {
         await JsRuntime.InvokeVoidAsync("blazorApextree.DeleteChart", Id);
-        await JsRuntime.InvokeVoidAsync("blazorApextree.CreateChart", ChartContainer, Id, JsonSerializer.Serialize(Options, ChartSerializer.DefaultOptions), JsonSerializer.Serialize(Parent, ChartSerializer.DefaultOptions));
+
+		Handler?.UpdateObjectReference();
+
+        await JsRuntime.InvokeVoidAsync("blazorApextree.CreateChart", ChartContainer, Id, JsonSerializer.Serialize(Options, ChartSerializer.DefaultOptions), JsonSerializer.Serialize(Parent, ChartSerializer.DefaultOptions), Handler?.ObjectReference);
+    }
+
+    /// <summary>
+    /// Gets the width CSS value from Options.
+    /// </summary>
+    private string GetWidth()
+    {
+        return ChartSerializer.GetMeasurement(Options.Width, Options.WidthUnits, true) ?? "400px";
+    }
+
+    /// <summary>
+    /// Gets the height CSS value from Options.
+    /// </summary>
+    private string GetHeight()
+    {
+        return ChartSerializer.GetMeasurement(Options.Height, Options.HeightUnits, false) ?? "400px";
     }
 
     /// <inheritdoc />
@@ -142,5 +205,6 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     {
         GC.SuppressFinalize(this);
         await JsRuntime.InvokeVoidAsync("blazorApextree.DeleteChart", Id);
+		Handler?.Dispose();
     }
 }

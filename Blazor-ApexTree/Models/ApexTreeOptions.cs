@@ -106,6 +106,16 @@ public class ApexTreeOptions : DataNodeOptions
 	public bool EnableTooltip { get; set; }
 
 	/// <summary>
+	/// Groups leaf nodes together when true.
+	/// </summary>
+	public bool? GroupLeafNodes { get; set; }
+
+	/// <summary>
+	/// The spacing between grouped leaf nodes in pixels.
+	/// </summary>
+	public int? GroupLeafNodesSpacing { get; set; }
+
+	/// <summary>
 	/// A function that returns the HTML template for nodes. Example:
 	///
 	/// <code>
@@ -176,6 +186,45 @@ public class ApexTreeOptions : DataNodeOptions
 
 	/// <inheritdoc />
 	public override int? TooltipMaxWidth { get; set; } = 100;
+
+	/// <summary>
+	/// The minimum width of the tooltip in pixels.
+	/// </summary>
+	public int? TooltipMinWidth { get; set; }
+
+	/// <summary>
+	/// The hex font color of the tooltip.
+	/// </summary>
+	/// <remarks>
+	/// Prefix with '#'.
+	/// </remarks>
+	public string? TooltipFontColor { get; set; }
+
+	/// <summary>
+	/// The font size of the tooltip in pixels.
+	/// </summary>
+	[JsonIgnore]
+	public int? TooltipFontSize { get; set; }
+
+	[JsonInclude]
+	[JsonPropertyName("tooltipFontSize")]
+	private string? SerializeTooltipFontSize { get => ChartSerializer.GetMeasurement(TooltipFontSize, TooltipFontSizeUnits, true); }
+
+	/// <summary>
+	/// The measurement type to use for the <see cref="TooltipFontSize"/>.
+	/// </summary>
+	[JsonIgnore]
+	public LengthUnits TooltipFontSizeUnits { get; set; } = LengthUnits.Pixels;
+
+	/// <summary>
+	/// The padding of the tooltip in pixels.
+	/// </summary>
+	public int? TooltipPadding { get; set; }
+
+	/// <summary>
+	/// The offset distance between tooltip and cursor in pixels.
+	/// </summary>
+	public int? TooltipOffset { get; set; }
 
 	/// <inheritdoc />
 	[JsonIgnore]

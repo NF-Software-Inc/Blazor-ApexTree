@@ -1,0 +1,29 @@
+@page "/expand-collapse"
+@inherits ComponentBase
+
+<PageTitle>Expand / Collapse Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Expand / Collapse</h1>
+        <p class="subtitle is-6">Demonstrates programmatic expand and collapse with buttons. Click the nodes directly or use the buttons below.</p>
+
+        <div class="buttons mb-4">
+            <button class="button is-link" @onclick="CollapseAll">
+                <span class="material-icons icon mr-1">unfold_less</span>
+                <span>Collapse All</span>
+            </button>
+            <button class="button is-link is-outlined" @onclick="ExpandAll">
+                <span class="material-icons icon mr-1">unfold_more</span>
+                <span>Expand All</span>
+            </button>
+        </div>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree @ref="TreeRef" TItem="string" Parent="ParentNode" Options="Options" />
+            }
+        </div>
+    </div>
+</section>

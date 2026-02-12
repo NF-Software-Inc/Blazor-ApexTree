@@ -1,4 +1,4 @@
-﻿using ApexTree;
+using ApexTree;
 using Microsoft.AspNetCore.Components;
 
 namespace Blazor_ApexTree_Demo.Pages.Examples;
@@ -8,8 +8,7 @@ namespace Blazor_ApexTree_Demo.Pages.Examples;
 /// </summary>
 public partial class BasicTree : ComponentBase
 {
-	private DataNode<Image>? ParentNode;
-	private int Ids;
+	private DataNode<string>? ParentNode;
 
 	private readonly ApexTreeOptions Options = new()
 	{
@@ -17,10 +16,8 @@ public partial class BasicTree : ComponentBase
 		EnableToolbar = true,
 		Width = 100,
 		WidthUnits = LengthUnits.Percent,
-		Height = 88,
-		HeightUnits = LengthUnits.Viewport,
-		NodeHeight = 75,
-		NodeTemplate = "(content) => { if (content.url.length > 0) return `<div style='display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;'><img style='width: 50px; height: 50px; border-radius: 50%;' src='${content.url}' /><div class='has-text-centered is-size-4 is-tiny'>${content.name}</div></div>`; else return `<div style='display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;'><span style='width: 50px; height: 50px; border-radius: 50%; line-height: 1.25;' class='material-icons is-size-2 has-text-centered b-1 has-border-solid'>person</span><div class='has-text-centered is-size-4 is-tiny'>${content.name}</div></div>`; }"
+		Height = 70,
+		HeightUnits = LengthUnits.Viewport
 	};
 
 	/// <inheritdoc/>
@@ -28,41 +25,42 @@ public partial class BasicTree : ComponentBase
 	{
 		ParentNode = new()
 		{
-			Id = GetNextId(),
-			Data = new Image("Margret Swanson", "https://randomuser.me/api/portraits/lego/1.jpg"),
+			Id = "ceo",
+			Data = "CEO",
 			Children =
 			[
 				new()
 				{
-					Id = GetNextId(),
-					Data = new Image("John Doe", "https://randomuser.me/api/portraits/lego/2.jpg")
-				},
-				new()
-				{
-					Id = GetNextId(),
-					Data = new Image("Jane Doe", "https://randomuser.me/api/portraits/lego/3.jpg"),
+					Id = "cto",
+					Data = "CTO",
 					Children =
 					[
-						new()
-						{
-							Id = GetNextId(),
-							Data = new Image("Sam Doe", "https://randomuser.me/api/portraits/lego/5.jpg")
-						},
-						new()
-						{
-							Id = GetNextId(),
-							Data = new Image("Sally Doe", "https://randomuser.me/api/portraits/lego/6.jpg")
-						}
+						new() { Id = "dev-lead", Data = "Dev Lead" },
+						new() { Id = "sr-eng", Data = "Sr. Engineer" },
+						new() { Id = "qa-lead", Data = "QA Lead" },
 					]
 				},
 				new()
 				{
-					Id = GetNextId(),
-					Data = new Image("Sam Smith", "https://randomuser.me/api/portraits/lego/4.jpg")
-				}
+					Id = "cfo",
+					Data = "CFO",
+					Children =
+					[
+						new() { Id = "accountant", Data = "Accountant" },
+						new() { Id = "analyst", Data = "Financial Analyst" },
+					]
+				},
+				new()
+				{
+					Id = "coo",
+					Data = "COO",
+					Children =
+					[
+						new() { Id = "ops-mgr", Data = "Operations Mgr" },
+						new() { Id = "logistics", Data = "Logistics" },
+					]
+				},
 			]
 		};
 	}
-
-	private string GetNextId() => (Ids++).ToString();
 }

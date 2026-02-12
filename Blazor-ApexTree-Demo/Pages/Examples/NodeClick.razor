@@ -1,0 +1,59 @@
+@page "/node-click"
+@inherits ComponentBase
+
+<PageTitle>Node Events Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Tree Events</h1>
+        <p class="subtitle is-6">Interact with nodes to see event callbacks in action: OnNodeClick, OnNodeHover, OnNodeExpand, and OnNodeCollapse.</p>
+
+        <div class="columns is-multiline mb-4">
+            <div class="column is-half">
+                <div class="notification is-info is-light">
+                    <p class="has-text-weight-semibold mb-2">🖱️ Click Event</p>
+                    <p><strong>Last Clicked:</strong> @(LastClickedNode ?? "None")</p>
+                    <p><strong>Node Data:</strong> @(LastClickedData ?? "—")</p>
+                    <p><strong>Total Clicks:</strong> @ClickCount</p>
+                </div>
+            </div>
+            <div class="column is-half">
+                <div class="notification is-link is-light">
+                    <p class="has-text-weight-semibold mb-2">👆 Hover Event</p>
+                    <p><strong>Last Hovered:</strong> @(LastHoveredNode ?? "None")</p>
+                    <p><strong>Node Data:</strong> @(LastHoveredData ?? "—")</p>
+                    <p><strong>Total Hovers:</strong> @HoverCount</p>
+                </div>
+            </div>
+            <div class="column is-half">
+                <div class="notification is-success is-light">
+                    <p class="has-text-weight-semibold mb-2">➕ Expand Event</p>
+                    <p><strong>Last Expanded:</strong> @(LastExpandedNode ?? "None")</p>
+                    <p><strong>Node Data:</strong> @(LastExpandedData ?? "—")</p>
+                    <p><strong>Total Expands:</strong> @ExpandCount</p>
+                </div>
+            </div>
+            <div class="column is-half">
+                <div class="notification is-warning is-light">
+                    <p class="has-text-weight-semibold mb-2">➖ Collapse Event</p>
+                    <p><strong>Last Collapsed:</strong> @(LastCollapsedNode ?? "None")</p>
+                    <p><strong>Node Data:</strong> @(LastCollapsedData ?? "—")</p>
+                    <p><strong>Total Collapses:</strong> @CollapseCount</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree TItem="string" 
+                          Parent="ParentNode" 
+                          Options="Options" 
+                          OnNodeClick="HandleNodeClick"
+                          OnNodeHover="HandleNodeHover"
+                          OnNodeExpand="HandleNodeExpand"
+                          OnNodeCollapse="HandleNodeCollapse" />
+            }
+        </div>
+    </div>
+</section>
