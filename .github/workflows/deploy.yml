@@ -34,7 +34,12 @@ jobs:
       run: dotnet publish -c Release -o ${{ github.workspace }}/publish -p:BaseHref="${BASE_HREF}"
       working-directory: ./Blazor-ApexTree-Demo
     - name: Add .nojekyll
-      run: touch ${{ github.workspace }}/publish/wwwroot/.nojekyll
+      run: |
+        touch ${{ github.workspace }}/publish/wwwroot/.nojekyll
+        echo "disable jekyll" > "${{ github.workspace }}/publish/wwwroot/.nojekyll"
+    - name: Rewrite base href in index.html (project pages)
+      run: |
+        sed -i "s|<base href=\"[^\"]*\" */>|<base href=\"${BASE_HREF}\" />|g" "${{ github.workspace }}/publish/wwwroot/index.html"
     - name: Add SPA 404 fallback
       run: |
         cat > "${{ github.workspace }}/publish/wwwroot/404.html" <<'EOF'
