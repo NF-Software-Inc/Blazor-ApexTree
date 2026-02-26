@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+name: deploy
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - uses: actions/checkout@v4.2.2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4.3.1
+      with:
+        dotnet-version: |
+          10.0.x
+          9.0.x
+          8.0.x
+    - name: Install dependencies
+      run: dotnet restore
+      working-directory: ./Blazor-ApexTree-Demo
+    - name: Set base href
+      run: |
+        echo "BASE_HREF=/Blazor-ApexTree/" >> "$GITHUB_ENV"
+        echo "Using BASE_HREF=$BASE_HREF"
+    - name: Publish
+      run: dotnet publish -c Release -o ${{ github.workspace }}/publish -p:BaseHref="${BASE_HREF}"
+      working-directory: ./Blazor-ApexTree-Demo
+    - name: Add .nojekyll
+      run: touch ${{ github.workspace }}/publish/wwwroot/.nojekyll
+    - name: Add SPA 404 fallback
+      run: |
+        cat > "${{ github.workspace }}/publish/wwwroot/404.html" <<'EOF'
+        
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>Redirecting…</title>
+          <script>
+            (function() {
+              var l = window.location;
+              var path = l.pathname + l.search + l.hash;
+
+              path = path.replace(/\/404\.html$/, "/");
+              l.replace(l.origin + l.pathname.replace(/\/[^\/]*$/, "/") + "?/" + path.replace(/^\//, ""));
+            })();
+          </script>
+        </head>
+        <body>Redirecting…</body>
+        </html>
+        EOF
+    - name: Configure Pages
+      uses: actions/configure-pages@v5.0.0
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v4.0.0
+      with:
+        path: "${{ github.workspace }}/publish/wwwroot"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4.0.5
