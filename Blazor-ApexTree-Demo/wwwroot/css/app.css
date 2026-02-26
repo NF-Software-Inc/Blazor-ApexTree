@@ -257,3 +257,16 @@ body {
     padding: 1rem;
   }
 }
+
+/* Load font as relative path for GitHub pages */
+@font-face {
+    font-family: "Material Icons";
+    font-style: normal;
+    font-weight: 400;
+    src: local("Material Icons"), local("MaterialIcons-Regular"), url("../_content/Easy.Blazor.Bulma/fonts/iconfont/materialicons-regular-webfont.woff2") format("woff2"), url("../_content/Easy.Blazor.Bulma/fonts/iconfont/materialicons-regular-webfont.woff") format("woff");
+}
+
+.material-icons {
+    font-family: "Material Icons" !important;
+    vertical-align: text-bottom;
+}
