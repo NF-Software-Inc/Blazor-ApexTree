@@ -21,6 +21,8 @@ jobs:
           10.0.x
           9.0.x
           8.0.x
+    - name: Install WASM Tooling
+      run: dotnet workload install wasm-tools
     - name: Install dependencies
       run: dotnet restore
       working-directory: ./Blazor-ApexTree-Demo
@@ -36,7 +38,6 @@ jobs:
     - name: Add SPA 404 fallback
       run: |
         cat > "${{ github.workspace }}/publish/wwwroot/404.html" <<'EOF'
-        
         <!DOCTYPE html>
         <html>
         <head>
