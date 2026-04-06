@@ -235,4 +235,83 @@ public class ApexTreeOptions : DataNodeOptions
 
 	/// <inheritdoc />
 	public override string? FontColor { get; set; } = "#000000";
+
+	/// <summary>
+	/// Animate node expansion/collapse transitions. Default: <see langword="true"/>.
+	/// </summary>
+	public bool? EnableAnimation { get; set; }
+
+	/// <summary>
+	/// Internal SVG viewport width in pixels. Default: 800.
+	/// </summary>
+	public int? ViewPortWidth { get; set; }
+
+	/// <summary>
+	/// Internal SVG viewport height in pixels. Default: 600.
+	/// </summary>
+	public int? ViewPortHeight { get; set; }
+
+	/// <summary>
+	/// Show the collapse-count badge on collapsed nodes. Default: <see langword="true"/>.
+	/// </summary>
+	public bool? CollapseBadgeEnabled { get; set; }
+
+	/// <summary>
+	/// Minimum number of hidden children required before the badge appears. Default: 1.
+	/// </summary>
+	public int? CollapseBadgeThreshold { get; set; }
+
+	/// <summary>
+	/// Background color of the collapse-count badge.
+	/// </summary>
+	/// <remarks>
+	/// Prefix with '#'. Default: '#5C6BC0'.
+	/// </remarks>
+	public string? CollapseBadgeBGColor { get; set; }
+
+	/// <summary>
+	/// Font color of the collapse-count badge.
+	/// </summary>
+	/// <remarks>
+	/// Prefix with '#'. Default: '#FFFFFF'.
+	/// </remarks>
+	public string? CollapseBadgeFontColor { get; set; }
+
+	/// <summary>
+	/// Font size of the collapse-count badge in pixels. Default: 12.
+	/// </summary>
+	[JsonIgnore]
+	public int? CollapseBadgeFontSize { get; set; }
+
+	[JsonInclude]
+	[JsonPropertyName("collapseBadgeFontSize")]
+	private string? SerializeCollapseBadgeFontSize { get => ChartSerializer.GetMeasurement(CollapseBadgeFontSize, CollapseBadgeFontSizeUnits, true); }
+
+	/// <summary>
+	/// The measurement type to use for the <see cref="CollapseBadgeFontSize"/>.
+	/// </summary>
+	[JsonIgnore]
+	public LengthUnits CollapseBadgeFontSizeUnits { get; set; } = LengthUnits.Pixels;
+
+	/// <summary>
+	/// Background color of the expand/collapse button.
+	/// </summary>
+	/// <remarks>
+	/// Prefix with '#'. Default: '#FFFFFF'.
+	/// </remarks>
+	public string? ExpandCollapseButtonBGColor { get; set; }
+
+	/// <summary>
+	/// Border color of the expand/collapse button.
+	/// </summary>
+	/// <remarks>
+	/// Prefix with '#'. Default: '#BCBCBC'.
+	/// </remarks>
+	public string? ExpandCollapseButtonBorderColor { get; set; }
+
+	/// <summary>
+	/// WCAG 2.1 AA accessibility options for the tree chart.
+	/// Controls ARIA role/label semantics and keyboard navigation.
+	/// </summary>
+	public A11yOptions? A11y { get; set; }
 }
