@@ -70,4 +70,3 @@ jobs:
           name: nuget-package
           path: ./artifacts/*.nupkg
           retention-days: 30
-        run: dotnet nuget push ${{ env.PackageName }} --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
