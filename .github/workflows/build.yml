@@ -6,9 +6,9 @@ permissions:
 on:
   workflow_dispatch:
   push:
-    branches: [ master ]
+    branches: [main, master]
   pull_request:
-    branches: [ master ]
+    branches: [main, master]
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
@@ -22,17 +22,17 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: |
-          10.0.x
-          9.0.x
-          8.0.x
-    - name: Install dependencies
-      run: dotnet restore
-      working-directory: ./Blazor-ApexTree
-    - name: Build
-      run: dotnet build --configuration Release
-      working-directory: ./Blazor-ApexTree
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            10.0.x
+            9.0.x
+            8.0.x
+      - name: Install dependencies
+        run: dotnet restore
+        working-directory: ./Blazor-ApexTree
+      - name: Build
+        run: dotnet build --configuration Release
+        working-directory: ./Blazor-ApexTree

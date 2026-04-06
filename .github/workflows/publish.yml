@@ -1,64 +1,150 @@
-# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Auto Release & Tag
 
-name: publish
-permissions:
-  contents: read
 on:
-    workflow_dispatch:
-      inputs:
-        targets:
-          description: Targets
-          required: true
-          type: string
-        version:
-          description: Version
-          required: true
-          type: string
-        build:
-          description: Build
-          type: string
-        deploy:
-          description: Deploy
-          required: true
-          type: boolean
-          default: false
-    release:
-      types: [ published ]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  prepare:
+  check-release:
     runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message, 'release:')
+
     outputs:
-      Targets: ${{ steps.set-values.outputs.Targets }}
-      Version: ${{ steps.set-values.outputs.Version }}
-      Build: ${{ steps.set-values.outputs.Build }}
-      Deploy: ${{ steps.set-values.outputs.Deploy }}
-    defaults:
-      run:
-        shell: bash
+      should_release: ${{ steps.check.outputs.should_release }}
+      new_version: ${{ steps.version.outputs.new_version }}
+      new_version_number: ${{ steps.version.outputs.new_version_number }}
+
     steps:
-      - name: Update Environment Variables
-        id: set-values
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if release commit
+        id: check
         run: |
-          if [[ '${{ github.event_name }}' == 'workflow_dispatch' ]]; then
-            echo "Targets=${{ github.event.inputs.targets }}" >> "$GITHUB_OUTPUT"
-            echo "Version=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
-            echo "Build=${{ github.event.inputs.build || github.run_number }}" >> "$GITHUB_OUTPUT"
-            echo "Deploy=${{ github.event.inputs.deploy }}" >> "$GITHUB_OUTPUT"
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          if [[ "$COMMIT_MSG" == release:* ]]; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
           else
-            echo "Targets=${{ github.event.release.name }}" >> "$GITHUB_OUTPUT"
-            echo "Version=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
-            echo "Build=${{ github.run_number }}" >> "$GITHUB_OUTPUT"
-            echo "Deploy=${{ github.event_name == 'release' }}" >> "$GITHUB_OUTPUT"
+            echo "should_release=false" >> $GITHUB_OUTPUT
           fi
-  nuget:
-    needs: [ prepare ]
-    if: ${{ contains(needs.prepare.outputs.Targets, 'All') || contains(needs.prepare.outputs.Targets, 'NuGet') }}
-    permissions:
-      contents: write
-    uses: ./.github/workflows/publish-nuget.yml
-    with:
-      build: ${{ needs.prepare.outputs.Build }}
-      version: ${{ needs.prepare.outputs.Version }}
-      deploy: ${{ needs.prepare.outputs.Deploy == 'true' }}
-    secrets: inherit
+
+      - name: Get latest tag
+        id: get_latest_tag
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "Latest tag: $LATEST_TAG"
+
+      - name: Determine version bump
+        id: version
+        run: |
+          LATEST_TAG="${{ steps.get_latest_tag.outputs.latest_tag }}"
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+
+          CURRENT_VERSION=${LATEST_TAG#v}
+
+          IFS='.' read -r -a VERSION_PARTS <<< "$CURRENT_VERSION"
+          MAJOR="${VERSION_PARTS[0]:-0}"
+          MINOR="${VERSION_PARTS[1]:-0}"
+          PATCH="${VERSION_PARTS[2]:-0}"
+
+          if echo "$COMMIT_MSG" | grep -iq "BREAKING CHANGE"; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+            BUMP_TYPE="major"
+          elif echo "$COMMIT_MSG" | grep -iqE "^release:.*feat"; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            BUMP_TYPE="minor"
+          else
+            PATCH=$((PATCH + 1))
+            BUMP_TYPE="patch"
+          fi
+
+          NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          NEW_VERSION_NUMBER="${MAJOR}.${MINOR}.${PATCH}"
+
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "new_version_number=$NEW_VERSION_NUMBER" >> $GITHUB_OUTPUT
+          echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
+          echo "Bumping $BUMP_TYPE version: $LATEST_TAG -> $NEW_VERSION"
+
+      - name: Create git tag
+        run: |
+          NEW_VERSION="${{ steps.version.outputs.new_version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$NEW_VERSION" -m "Release $NEW_VERSION"
+          git push origin "$NEW_VERSION"
+          echo "Created and pushed tag: $NEW_VERSION"
+
+      - name: Create GitHub release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.version.outputs.new_version }}
+          release_name: Release ${{ steps.version.outputs.new_version }}
+          body: |
+            Automated release ${{ steps.version.outputs.new_version }}
+
+            Commit: ${{ github.event.head_commit.message }}
+            Bump type: ${{ steps.version.outputs.bump_type }}
+          draft: false
+          prerelease: false
+
+  publish-nuget:
+    needs: check-release
+    runs-on: ubuntu-latest
+    environment: nuget-publishing
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.check-release.outputs.new_version }}
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore Blazor-ApexTree/Blazor-ApexTree.csproj
+
+      - name: Build
+        run: |
+          dotnet build Blazor-ApexTree/Blazor-ApexTree.csproj \
+            --configuration Release \
+            --no-restore \
+            /p:Version=${{ needs.check-release.outputs.new_version_number }}
+
+      - name: Pack
+        run: |
+          dotnet pack Blazor-ApexTree/Blazor-ApexTree.csproj \
+            --configuration Release \
+            --no-build \
+            --output ./artifacts \
+            /p:Version=${{ needs.check-release.outputs.new_version_number }}
+
+      - name: Publish to NuGet
+        run: |
+          dotnet nuget push ./artifacts/*.nupkg \
+            --source https://api.nuget.org/v3/index.json \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --skip-duplicate
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: ./artifacts/*.nupkg
+          retention-days: 30

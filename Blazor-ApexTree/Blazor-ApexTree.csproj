@@ -7,20 +7,22 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>ApexTree</RootNamespace>
 
-		<Authors>NF Software Inc.</Authors>
-		<Company>NF Software Inc.</Company>
-		<Copyright>Copyright 2025 $(Company)</Copyright>
-		<Version>10.1.0</Version>
-		<AssemblyVersion>10.1.0.0</AssemblyVersion>
-		<FileVersion>10.1.0.0</FileVersion>
+		<Authors>ApexCharts</Authors>
+		<Company>ApexCharts</Company>
+		<Copyright>Copyright 2026 $(Company)</Copyright>
+		<Version>10.2.0</Version>
+		<AssemblyVersion>10.2.0.0</AssemblyVersion>
+		<FileVersion>10.2.0.0</FileVersion>
 		<PackageId>Blazor-ApexTree</PackageId>
 		<PackageTags>Blazor Charts ApexTree Server WebAssembly</PackageTags>
-		<RepositoryUrl>https://github.com/NF-Software-Inc/Blazor-ApexTree</RepositoryUrl>
-		<PackageProjectUrl>https://github.com/NF-Software-Inc/Blazor-ApexTree</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/apexcharts/Blazor-ApexTree</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/apexcharts/Blazor-ApexTree</PackageProjectUrl>
 		<Description>
 			A Blazor wrapper for ApexTree.js.
 		</Description>
 		<PackageReleaseNotes>
+			10.2.0 Update ApexTree core to 1.9.0, add EnableAnimation, ViewPortWidth, ViewPortHeight, collapse badge options, expand/collapse button styling, A11yOptions, Zoom/ExportToSvg/Construct graph API methods, AdditionalOptions for forward-compatibility
+
 			10.1.0 Update licensing model, update ApexTree to 1.7.0, add event handlers
 
 			10.0.0 Add support for .NET 9 and .NET 10
