@@ -173,6 +173,32 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     }
 
     /// <summary>
+    /// Zooms the chart by the specified factor.
+    /// </summary>
+    /// <param name="factor">The zoom factor. Use values greater than 1 to zoom in (e.g. 1.2) and less than 1 to zoom out (e.g. 0.8).</param>
+    public async Task Zoom(double factor)
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.Zoom", Id, factor);
+    }
+
+    /// <summary>
+    /// Downloads the current tree as an SVG file.
+    /// </summary>
+    public async Task ExportToSvg()
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.ExportToSvg", Id);
+    }
+
+    /// <summary>
+    /// Replaces the tree data and re-renders without recreating the ApexTree instance.
+    /// </summary>
+    /// <param name="data">The new root node to render.</param>
+    public async Task Construct(DataNode<TItem> data)
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.Construct", Id, JsonSerializer.Serialize(data, ChartSerializer.DefaultOptions));
+    }
+
+    /// <summary>
     /// Destroys the chart and recreates it. Useful when the dataset or options have changed.
     /// </summary>
     public async Task RebuildChart()

@@ -177,4 +177,17 @@ public class DataNodeOptions
 	/// Prefix with '#'.
 	/// </remarks>
 	public virtual string? FontColor { get; set; }
+
+	/// <summary>
+	/// Pass-through dictionary for any core library options not yet exposed as typed properties.
+	/// Each entry is serialized as a top-level JSON key and forwarded directly to the ApexTree
+	/// JavaScript constructor, enabling forward-compatibility without requiring a new Blazor release.
+	/// </summary>
+	/// <remarks>
+	/// Note: values serialized via this dictionary are not processed by <see cref="Internal.FunctionStringConverter"/>,
+	/// so JavaScript function strings are not supported here. Use the typed <see cref="ApexTreeOptions.NodeTemplate"/>
+	/// and <see cref="ApexTreeOptions.TooltipTemplate"/> properties for function-valued options.
+	/// </remarks>
+	[JsonExtensionData]
+	public Dictionary<string, object?>? AdditionalOptions { get; set; }
 }
