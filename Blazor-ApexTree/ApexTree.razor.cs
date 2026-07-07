@@ -51,6 +51,13 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     [Parameter]
     public EventCallback<NodeCollapseEventArgs> OnNodeCollapse { get; set; }
 
+    /// <summary>
+    /// Callback invoked when the set of selected nodes changes. Requires
+    /// <see cref="ApexTreeOptions.EnableSelection"/> to be set.
+    /// </summary>
+    [Parameter]
+    public EventCallback<NodeSelectionEventArgs> OnSelectionChange { get; set; }
+
 	[Inject]
 	private IJSRuntime JsRuntime { get; init; } = default!;
 
@@ -114,8 +121,13 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
                 Options.NodeTemplate = "(content) => { return `<div style='display: flex; justify-content: center; align-items: center; text-align: center; height: 100%;'>${content}</div>`; }";
             else if (UnderlyingType == typeof(Image))
                 Options.NodeTemplate = "(content) => { return `<div style='display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;'><img style='width: 50px; height: 50px; border-radius: 50%;' src='${content.url}' /><div>${content.name}</div></div>`; }";
+            else if (UnderlyingType == typeof(OrgNodeData))
+            {
+                // Leave NodeTemplate null on purpose: the core library renders its built-in
+                // org-chart card from the OrgNodeData payload (contentKey "data").
+            }
             else
-                throw new ArgumentException("Must provide a node template when TItem is not string or Image.", nameof(Options.NodeTemplate));
+                throw new ArgumentException("Must provide a node template when TItem is not string, Image, or OrgNodeData.", nameof(Options.NodeTemplate));
         }
     }
 
@@ -179,6 +191,15 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     public async Task Zoom(double factor)
     {
         await JsRuntime.InvokeVoidAsync("blazorApextree.Zoom", Id, factor);
+    }
+
+    /// <summary>
+    /// Resets the pan/zoom baseline to the current viewBox. Useful after programmatic viewBox changes
+    /// so subsequent pan/zoom interactions start from the new position.
+    /// </summary>
+    public async Task ResetPanZoomBaseAsync()
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.ResetPanZoomBase", Id);
     }
 
     /// <summary>

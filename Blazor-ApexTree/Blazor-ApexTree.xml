@@ -23,6 +23,32 @@
             Each instance of this component must have its own options object.
             </remarks>
         </member>
+        <member name="P:ApexTree.ApexTree`1.OnNodeClick">
+            <summary>
+            Callback invoked when a node in the tree is clicked.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTree`1.OnNodeHover">
+            <summary>
+            Callback invoked when a node in the tree is hovered.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTree`1.OnNodeExpand">
+            <summary>
+            Callback invoked when a node in the tree is expanded.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTree`1.OnNodeCollapse">
+            <summary>
+            Callback invoked when a node in the tree is collapsed.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTree`1.OnSelectionChange">
+            <summary>
+            Callback invoked when the set of selected nodes changes. Requires
+            <see cref="P:ApexTree.ApexTreeOptions.EnableSelection"/> to be set.
+            </summary>
+        </member>
         <member name="M:ApexTree.ApexTree`1.OnInitialized">
             <inheritdoc/>
         </member>
@@ -64,8 +90,165 @@
             </summary>
             <param name="keepOldPosition">Undocumented.</param>
         </member>
+        <member name="M:ApexTree.ApexTree`1.Zoom(System.Double)">
+            <summary>
+            Zooms the chart by the specified factor.
+            </summary>
+            <param name="factor">The zoom factor. Use values greater than 1 to zoom in (e.g. 1.2) and less than 1 to zoom out (e.g. 0.8).</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.ResetPanZoomBaseAsync">
+            <summary>
+            Resets the pan/zoom baseline to the current viewBox. Useful after programmatic viewBox changes
+            so subsequent pan/zoom interactions start from the new position.
+            </summary>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.ExportToSvg">
+            <summary>
+            Downloads the current tree as an SVG file.
+            </summary>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.Construct(ApexTree.DataNode{`0})">
+            <summary>
+            Replaces the tree data and re-renders without recreating the ApexTree instance.
+            </summary>
+            <param name="data">The new root node to render.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.RebuildChart">
+            <summary>
+            Destroys the chart and recreates it. Useful when the dataset or options have changed.
+            </summary>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.GetWidth">
+            <summary>
+            Gets the width CSS value from Options.
+            </summary>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.GetHeight">
+            <summary>
+            Gets the height CSS value from Options.
+            </summary>
+        </member>
         <member name="M:ApexTree.ApexTree`1.DisposeAsync">
             <inheritdoc />
+        </member>
+        <member name="T:ApexTree.ApexTreeLicense">
+            <summary>
+            Manages ApexTree license configuration.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeLicense.LicenseKey">
+            <summary>
+            Gets the current license key.
+            </summary>
+        </member>
+        <member name="M:ApexTree.ApexTreeLicense.SetLicense(System.String)">
+            <summary>
+            Sets the ApexTree commercial license key.
+            Call this method in Program.cs before rendering any trees.
+            </summary>
+            <param name="licenseKey">Your ApexTree commercial license key.</param>
+            <example>
+            <code>
+            // in Program.cs
+            ApexTreeLicense.SetLicense("your-license-key-here");
+            </code>
+            </example>
+            <exception cref="T:System.ArgumentException">Thrown when license key is null or empty.</exception>
+        </member>
+        <member name="P:ApexTree.ApexTreeLicense.HasLicense">
+            <summary>
+            Checks if a license key has been configured.
+            </summary>
+        </member>
+        <member name="T:ApexTree.CardImagePosition">
+            <summary>
+            Avatar placement for the built-in org-card node template.
+            </summary>
+        </member>
+        <member name="F:ApexTree.CardImagePosition.Left">
+            <summary>
+            Avatar sits to the left of the text (default).
+            </summary>
+        </member>
+        <member name="F:ApexTree.CardImagePosition.Top">
+            <summary>
+            Avatar is centered above the text.
+            </summary>
+        </member>
+        <member name="T:ApexTree.EdgeColorMode">
+            <summary>
+            Controls how edge (connector) colors are determined.
+            </summary>
+        </member>
+        <member name="F:ApexTree.EdgeColorMode.Default">
+            <summary>
+            All edges use the global edge color.
+            </summary>
+        </member>
+        <member name="F:ApexTree.EdgeColorMode.Node">
+            <summary>
+            Each edge inherits the border color of the child node it connects into.
+            </summary>
+        </member>
+        <member name="T:ApexTree.EdgeStyle">
+            <summary>
+            Shape of the connecting lines drawn between parent and child nodes.
+            </summary>
+        </member>
+        <member name="F:ApexTree.EdgeStyle.Curved">
+            <summary>
+            Smooth cubic Bezier curve from parent to child.
+            </summary>
+        </member>
+        <member name="F:ApexTree.EdgeStyle.Orthogonal">
+            <summary>
+            Right-angle elbows with rounded corners (default; the traditional org-chart look).
+            </summary>
+        </member>
+        <member name="F:ApexTree.EdgeStyle.Straight">
+            <summary>
+            A direct line from the parent anchor to the child anchor.
+            </summary>
+        </member>
+        <member name="T:ApexTree.ExternalLabelAlign">
+            <summary>
+            Horizontal placement of an external node label relative to the node.
+            </summary>
+        </member>
+        <member name="F:ApexTree.ExternalLabelAlign.Center">
+            <summary>
+            Label is centered on the node horizontally (default).
+            </summary>
+        </member>
+        <member name="F:ApexTree.ExternalLabelAlign.Left">
+            <summary>
+            Label sits to the left of the node (text is right-anchored).
+            </summary>
+        </member>
+        <member name="F:ApexTree.ExternalLabelAlign.Right">
+            <summary>
+            Label sits to the right of the node (text is left-anchored).
+            </summary>
+        </member>
+        <member name="T:ApexTree.ExternalLabelVerticalAlign">
+            <summary>
+            Vertical placement of an external node label relative to the node.
+            </summary>
+        </member>
+        <member name="F:ApexTree.ExternalLabelVerticalAlign.Bottom">
+            <summary>
+            Label sits below the node (text is top-anchored).
+            </summary>
+        </member>
+        <member name="F:ApexTree.ExternalLabelVerticalAlign.Middle">
+            <summary>
+            Label is centered on the node vertically (default).
+            </summary>
+        </member>
+        <member name="F:ApexTree.ExternalLabelVerticalAlign.Top">
+            <summary>
+            Label sits above the node (text is bottom-anchored).
+            </summary>
         </member>
         <member name="T:ApexTree.LengthUnits">
             <summary>
@@ -132,6 +315,42 @@
             Measure in inches.
             </summary>
         </member>
+        <member name="T:ApexTree.Theme">
+            <summary>
+            Built-in theme presets for the tree.
+            </summary>
+        </member>
+        <member name="F:ApexTree.Theme.Light">
+            <summary>
+            Default soft-neutral light palette.
+            </summary>
+        </member>
+        <member name="F:ApexTree.Theme.Dark">
+            <summary>
+            Dark-mode palette with slate backgrounds.
+            </summary>
+        </member>
+        <member name="F:ApexTree.Theme.Custom">
+            <summary>
+            Disables the built-in CSS variable injection so host-page variables win cleanly.
+            </summary>
+        </member>
+        <member name="T:ApexTree.TreeSelectionMode">
+            <summary>
+            Node selection behaviour. Leave <see cref="P:ApexTree.ApexTreeOptions.EnableSelection"/> unset (null) to
+            disable selection entirely.
+            </summary>
+        </member>
+        <member name="F:ApexTree.TreeSelectionMode.Single">
+            <summary>
+            Only one node can be selected at a time.
+            </summary>
+        </member>
+        <member name="F:ApexTree.TreeSelectionMode.Multi">
+            <summary>
+            Multiple nodes can be selected (Ctrl/Cmd-click).
+            </summary>
+        </member>
         <member name="T:ApexTree.Internal.FunctionStringConverter">
              <summary>
              Ensures that JS functions are serialized with the key '@eval' so they can be appropriately evaluated on the client side. Example:
@@ -152,6 +371,64 @@
         <member name="M:ApexTree.Internal.FunctionStringConverter.Write(System.Text.Json.Utf8JsonWriter,System.String,System.Text.Json.JsonSerializerOptions)">
             <inheritdoc />
         </member>
+        <member name="T:ApexTree.Internal.JsHandler`1">
+            <summary>
+            Provides internal-only <see cref="T:Microsoft.JSInterop.JSInvokableAttribute"/> callbacks
+            </summary>
+            <typeparam name="TItem"></typeparam>
+        </member>
+        <member name="M:ApexTree.Internal.JsHandler`1.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="M:ApexTree.Internal.JsHandler`1.OnNodeClicked(System.String)">
+            <summary>
+            Called from JavaScript when a tree node is clicked.
+            </summary>
+            <param name="nodeId">The ID of the clicked node.</param>
+        </member>
+        <member name="M:ApexTree.Internal.JsHandler`1.OnNodeHovered(System.String)">
+            <summary>
+            Called from JavaScript when a tree node is hovered.
+            </summary>
+            <param name="nodeId">The ID of the hovered node.</param>
+        </member>
+        <member name="M:ApexTree.Internal.JsHandler`1.OnNodeExpanded(System.String)">
+            <summary>
+            Called from JavaScript when a tree node is expanded.
+            </summary>
+            <param name="nodeId">The ID of the expanded node.</param>
+        </member>
+        <member name="M:ApexTree.Internal.JsHandler`1.OnNodeCollapsed(System.String)">
+            <summary>
+            Called from JavaScript when a tree node is collapsed.
+            </summary>
+            <param name="nodeId">The ID of the collapsed node.</param>
+        </member>
+        <member name="M:ApexTree.Internal.JsHandler`1.OnSelectionChanged(System.String[])">
+            <summary>
+            Called from JavaScript when the set of selected nodes changes.
+            </summary>
+            <param name="selectedIds">The IDs of the currently selected nodes.</param>
+        </member>
+        <member name="T:ApexTree.A11yOptions">
+            <summary>
+            WCAG 2.1 AA accessibility options for the tree chart.
+            </summary>
+            <remarks>
+            Controls ARIA role/label semantics on the SVG root and enables keyboard navigation.
+            Disable only when rendering inside a container that already provides its own accessibility layer.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.A11yOptions.Enabled">
+            <summary>
+            Enable ARIA semantics and keyboard navigation. Default: <see langword="true"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.A11yOptions.Label">
+            <summary>
+            Override the default <c>aria-label</c> ("Organizational chart") on the root SVG.
+            </summary>
+        </member>
         <member name="T:ApexTree.ApexTreeOptions">
              <summary>
              Main class to configure options that are to be serialized and passed to the JavaScript.
@@ -161,11 +438,6 @@
             
              <see href="https://apexcharts.com/apextree/docs/options">JavaScript Documentation</see>.
              </remarks>
-        </member>
-        <member name="P:ApexTree.ApexTreeOptions.Id">
-            <summary>
-            The HTML id attribute for the chart.
-            </summary>
         </member>
         <member name="P:ApexTree.ApexTreeOptions.Debug">
             <summary>
@@ -245,6 +517,16 @@
             Enable tooltip on hover of nodes.
             </summary>
         </member>
+        <member name="P:ApexTree.ApexTreeOptions.GroupLeafNodes">
+            <summary>
+            Groups leaf nodes together when true.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.GroupLeafNodesSpacing">
+            <summary>
+            The spacing between grouped leaf nodes in pixels.
+            </summary>
+        </member>
         <member name="P:ApexTree.ApexTreeOptions.NodeTemplate">
              <summary>
              A function that returns the HTML template for nodes. Example:
@@ -314,6 +596,39 @@
         <member name="P:ApexTree.ApexTreeOptions.TooltipMaxWidth">
             <inheritdoc />
         </member>
+        <member name="P:ApexTree.ApexTreeOptions.TooltipMinWidth">
+            <summary>
+            The minimum width of the tooltip in pixels.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.TooltipFontColor">
+            <summary>
+            The hex font color of the tooltip.
+            </summary>
+            <remarks>
+            Prefix with '#'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.TooltipFontSize">
+            <summary>
+            The font size of the tooltip in pixels.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.TooltipFontSizeUnits">
+            <summary>
+            The measurement type to use for the <see cref="P:ApexTree.ApexTreeOptions.TooltipFontSize"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.TooltipPadding">
+            <summary>
+            The padding of the tooltip in pixels.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.TooltipOffset">
+            <summary>
+            The offset distance between tooltip and cursor in pixels.
+            </summary>
+        </member>
         <member name="P:ApexTree.ApexTreeOptions.FontSize">
             <inheritdoc />
         </member>
@@ -322,6 +637,138 @@
         </member>
         <member name="P:ApexTree.ApexTreeOptions.FontColor">
             <inheritdoc />
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EnableAnimation">
+            <summary>
+            Animate node expansion/collapse transitions. Default: <see langword="true"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.ViewPortWidth">
+            <summary>
+            Internal SVG viewport width in pixels. Default: 800.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.ViewPortHeight">
+            <summary>
+            Internal SVG viewport height in pixels. Default: 600.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CollapseBadgeEnabled">
+            <summary>
+            Show the collapse-count badge on collapsed nodes. Default: <see langword="true"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CollapseBadgeThreshold">
+            <summary>
+            Minimum number of hidden children required before the badge appears. Default: 1.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CollapseBadgeBGColor">
+            <summary>
+            Background color of the collapse-count badge.
+            </summary>
+            <remarks>
+            Prefix with '#'. Default: '#5C6BC0'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CollapseBadgeFontColor">
+            <summary>
+            Font color of the collapse-count badge.
+            </summary>
+            <remarks>
+            Prefix with '#'. Default: '#FFFFFF'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CollapseBadgeFontSize">
+            <summary>
+            Font size of the collapse-count badge in pixels. Default: 12.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CollapseBadgeFontSizeUnits">
+            <summary>
+            The measurement type to use for the <see cref="P:ApexTree.ApexTreeOptions.CollapseBadgeFontSize"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.ExpandCollapseButtonBGColor">
+            <summary>
+            Background color of the expand/collapse button.
+            </summary>
+            <remarks>
+            Prefix with '#'. Default: '#FFFFFF'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.ExpandCollapseButtonBorderColor">
+            <summary>
+            Border color of the expand/collapse button.
+            </summary>
+            <remarks>
+            Prefix with '#'. Default: '#BCBCBC'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.Theme">
+            <summary>
+            Built-in theme preset. <see cref="F:ApexTree.Theme.Light"/> uses the default soft-neutral palette,
+            <see cref="F:ApexTree.Theme.Dark"/> a dark-mode palette, and <see cref="F:ApexTree.Theme.Custom"/>
+            disables built-in CSS variable injection so host-page variables win. Default: Light.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EnableSearch">
+            <summary>
+            Show a search input in the toolbar area that filters nodes by label and lineage-highlights matches. Default: <see langword="false"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EnableBreadcrumb">
+            <summary>
+            Show a breadcrumb trail above the chart that updates on node click; clicking a segment re-centers on that ancestor. Default: <see langword="false"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EnableExpandCollapseZoom">
+            <summary>
+            Re-fit the viewBox to the new tree bounds when a node is collapsed or expanded. Default: <see langword="true"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EnableZoomPan">
+            <summary>
+            Enable Ctrl/Cmd + mouse-wheel (or trackpad pinch) zoom and drag-to-pan on the canvas. Default: <see langword="true"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EnableSelection">
+            <summary>
+            Node selection behaviour. Leave unset to disable selection (the default). Set to
+            <see cref="F:ApexTree.TreeSelectionMode.Single"/> or <see cref="F:ApexTree.TreeSelectionMode.Multi"/> to enable it;
+            listen for changes via the <c>OnSelectionChange</c> event.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.PaddingX">
+            <summary>
+            Horizontal padding around the rendered tree in pixels. Default: 100.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.PaddingY">
+            <summary>
+            Vertical padding around the rendered tree in pixels. Default: 100.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EdgeStyle">
+            <summary>
+            Shape of the connecting lines between nodes. Default: <see cref="F:ApexTree.EdgeStyle.Orthogonal"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EdgeColorMode">
+            <summary>
+            How edge colors are resolved. Default: <see cref="F:ApexTree.EdgeColorMode.Default"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.Locale">
+            <summary>
+            Localization and text-direction (RTL) options.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.A11y">
+            <summary>
+            WCAG 2.1 AA accessibility options for the tree chart.
+            Controls ARIA role/label semantics and keyboard navigation.
+            </summary>
         </member>
         <member name="T:ApexTree.ImageDataNode">
             <summary>
@@ -555,6 +1002,100 @@
             Prefix with '#'.
             </remarks>
         </member>
+        <member name="P:ApexTree.DataNodeOptions.CardImagePosition">
+            <summary>
+            Avatar placement for the built-in org-card node template. Default: <see cref="F:ApexTree.CardImagePosition.Left"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.ExternalLabel">
+            <summary>
+            Render the node's label outside the node bounds (with alignment, offset and rotation) instead of via the node template.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.ExpandCollapseOnNodeClick">
+            <summary>
+            Toggle expand/collapse when the node itself is clicked (not just the expand/collapse button). Default: <see langword="false"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.NodeShadow">
+            <summary>
+            CSS box-shadow applied to the node.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.NodeShadowHover">
+            <summary>
+            CSS box-shadow applied to the node on hover.
+            </summary>
+        </member>
+        <member name="P:ApexTree.DataNodeOptions.AdditionalOptions">
+            <summary>
+            Pass-through dictionary for any core library options not yet exposed as typed properties.
+            Each entry is serialized as a top-level JSON key and forwarded directly to the ApexTree
+            JavaScript constructor, enabling forward-compatibility without requiring a new Blazor release.
+            </summary>
+            <remarks>
+            Note: values serialized via this dictionary are not processed by <see cref="T:ApexTree.Internal.FunctionStringConverter"/>,
+            so JavaScript function strings are not supported here. Use the typed <see cref="P:ApexTree.ApexTreeOptions.NodeTemplate"/>
+            and <see cref="P:ApexTree.ApexTreeOptions.TooltipTemplate"/> properties for function-valued options.
+            </remarks>
+        </member>
+        <member name="T:ApexTree.ExternalLabelOptions">
+            <summary>
+            Options for rendering a node's label outside the node bounds, instead of via the in-node template.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ExternalLabelOptions.Enabled">
+            <summary>
+            Render the node's label outside the node bounds. When <see langword="false"/> (default), the
+            in-node <see cref="P:ApexTree.ApexTreeOptions.NodeTemplate"/> is used as before.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ExternalLabelOptions.Align">
+            <summary>
+            Horizontal placement of the label relative to the node (default: <see cref="F:ApexTree.ExternalLabelAlign.Center"/>).
+            </summary>
+        </member>
+        <member name="P:ApexTree.ExternalLabelOptions.VerticalAlign">
+            <summary>
+            Vertical placement of the label relative to the node (default: <see cref="F:ApexTree.ExternalLabelVerticalAlign.Middle"/>).
+            </summary>
+        </member>
+        <member name="P:ApexTree.ExternalLabelOptions.FontColor">
+            <summary>
+            Override the global font color for the external label only.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ExternalLabelOptions.FontFamily">
+            <summary>
+            Override the global font family for the external label only.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ExternalLabelOptions.FontSize">
+            <summary>
+            Override the global font size for the external label only (e.g. "12px").
+            </summary>
+        </member>
+        <member name="P:ApexTree.ExternalLabelOptions.FontWeight">
+            <summary>
+            Override the global font weight for the external label only.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ExternalLabelOptions.OffsetX">
+            <summary>
+            Additional horizontal pixel offset applied after alignment (default: 0).
+            </summary>
+        </member>
+        <member name="P:ApexTree.ExternalLabelOptions.OffsetY">
+            <summary>
+            Additional vertical pixel offset applied after vertical alignment (default: 0).
+            </summary>
+        </member>
+        <member name="P:ApexTree.ExternalLabelOptions.Rotation">
+            <summary>
+            Rotation in degrees applied around the label anchor. Use 90 for vertical leaf labels
+            (top-to-bottom) and -90 for bottom-to-top text (default: 0).
+            </summary>
+        </member>
         <member name="T:ApexTree.Image">
             <summary>
             Defines properties required for loading images in the chart.
@@ -574,6 +1115,174 @@
         </member>
         <member name="P:ApexTree.Image.Url">
             <summary>The URL to get the image or base64 string containing the image data.</summary>
+        </member>
+        <member name="T:ApexTree.LocaleOptions">
+            <summary>
+            Localization and text-direction (RTL) options for the tree.
+            </summary>
+        </member>
+        <member name="P:ApexTree.LocaleOptions.Direction">
+            <summary>
+            Text and layout direction. "rtl" mirrors the tree horizontally and sets dir="rtl" on the
+            container (node text and the search/breadcrumb chrome flow right-to-left); "auto" defers to
+            the document/element direction. Accepts "ltr", "rtl", or "auto" (default: "ltr").
+            </summary>
+        </member>
+        <member name="P:ApexTree.LocaleOptions.Messages">
+            <summary>
+            Overrides for user-facing strings, keyed by message name (e.g. "searchPlaceholder",
+            "rootAriaLabel"). Unset keys keep their English defaults.
+            </summary>
+        </member>
+        <member name="T:ApexTree.NodeClickEventArgs">
+            <summary>
+            Provides data for the node click event.
+            </summary>
+        </member>
+        <member name="P:ApexTree.NodeClickEventArgs.NodeId">
+            <summary>
+            The ID of the clicked node, matching <see cref="P:ApexTree.DataNode`1.Id"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.NodeClickEventArgs.Timestamp">
+            <summary>
+            The timestamp when the event occurred.
+            </summary>
+        </member>
+        <member name="T:ApexTree.NodeCollapseEventArgs">
+            <summary>
+            Provides data for the node collapse event.
+            </summary>
+        </member>
+        <member name="P:ApexTree.NodeCollapseEventArgs.NodeId">
+            <summary>
+            The ID of the collapsed node, matching <see cref="P:ApexTree.DataNode`1.Id"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.NodeCollapseEventArgs.Timestamp">
+            <summary>
+            The timestamp when the event occurred.
+            </summary>
+        </member>
+        <member name="T:ApexTree.NodeExpandEventArgs">
+            <summary>
+            Provides data for the node expand event.
+            </summary>
+        </member>
+        <member name="P:ApexTree.NodeExpandEventArgs.NodeId">
+            <summary>
+            The ID of the expanded node, matching <see cref="P:ApexTree.DataNode`1.Id"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.NodeExpandEventArgs.Timestamp">
+            <summary>
+            The timestamp when the event occurred.
+            </summary>
+        </member>
+        <member name="T:ApexTree.NodeHoverEventArgs">
+            <summary>
+            Provides data for the node hover event.
+            </summary>
+        </member>
+        <member name="P:ApexTree.NodeHoverEventArgs.NodeId">
+            <summary>
+            The ID of the hovered node, matching <see cref="P:ApexTree.DataNode`1.Id"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.NodeHoverEventArgs.Timestamp">
+            <summary>
+            The timestamp when the event occurred.
+            </summary>
+        </member>
+        <member name="T:ApexTree.NodeSelectionEventArgs">
+            <summary>
+            Event data raised when the set of selected nodes changes (requires
+            <see cref="P:ApexTree.ApexTreeOptions.EnableSelection"/> to be set).
+            </summary>
+        </member>
+        <member name="P:ApexTree.NodeSelectionEventArgs.SelectedIds">
+            <summary>
+            The ids of the currently selected nodes.
+            </summary>
+        </member>
+        <member name="P:ApexTree.NodeSelectionEventArgs.Timestamp">
+            <summary>
+            The time the selection change occurred (UTC).
+            </summary>
+        </member>
+        <member name="T:ApexTree.OrgNodeData">
+            <summary>
+            Structured payload for the built-in org-chart card node template. Attach an instance as the
+            <see cref="P:ApexTree.DataNode`1.Data"/> of each node (i.e. use <c>ApexTree&lt;OrgNodeData&gt;</c>). The
+            built-in template renders an org card when the data object has any of <see cref="P:ApexTree.OrgNodeData.ImageUrl"/>,
+            <see cref="P:ApexTree.OrgNodeData.Title"/>, <see cref="P:ApexTree.OrgNodeData.Subtitle"/>, <see cref="P:ApexTree.OrgNodeData.Badge"/>, <see cref="P:ApexTree.OrgNodeData.AccentColor"/>, or
+            <see cref="P:ApexTree.OrgNodeData.Meta"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeData.Name">
+            <summary>
+            Primary display label (equivalent to the node name).
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeData.Title">
+            <summary>
+            Second line, typically a job title. Medium size, lower contrast.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeData.Subtitle">
+            <summary>
+            Third line, typically a department or team. Smaller, lower contrast.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeData.ImageUrl">
+            <summary>
+            Avatar URL rendered as a circular image on the card.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeData.AccentColor">
+            <summary>
+            Colored left stripe on the card, useful for categorising roles or departments. Any valid CSS color.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeData.Badge">
+            <summary>
+            Status chip shown in the upper-right corner of the card.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeData.Meta">
+            <summary>
+            Extra metadata rows rendered under the title/subtitle as icon + label lines.
+            </summary>
+        </member>
+        <member name="T:ApexTree.OrgNodeBadge">
+            <summary>
+            Status chip for an <see cref="T:ApexTree.OrgNodeData"/> card.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeBadge.Text">
+            <summary>
+            Chip label.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeBadge.Color">
+            <summary>
+            Chip background color; defaults to a soft indigo.
+            </summary>
+        </member>
+        <member name="T:ApexTree.OrgNodeMeta">
+            <summary>
+            A metadata row on an <see cref="T:ApexTree.OrgNodeData"/> card.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeMeta.Icon">
+            <summary>
+            Optional CSS class for an icon font (e.g. "bi bi-person"). Omit for a plain text row.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeMeta.Label">
+            <summary>
+            Row label text.
+            </summary>
         </member>
         <member name="T:ApexTree.GeneralExtensions">
             <summary>

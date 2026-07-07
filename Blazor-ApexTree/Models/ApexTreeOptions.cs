@@ -310,6 +310,65 @@ public class ApexTreeOptions : DataNodeOptions
 	public string? ExpandCollapseButtonBorderColor { get; set; }
 
 	/// <summary>
+	/// Built-in theme preset. <see cref="ApexTree.Theme.Light"/> uses the default soft-neutral palette,
+	/// <see cref="ApexTree.Theme.Dark"/> a dark-mode palette, and <see cref="ApexTree.Theme.Custom"/>
+	/// disables built-in CSS variable injection so host-page variables win. Default: Light.
+	/// </summary>
+	public Theme? Theme { get; set; }
+
+	/// <summary>
+	/// Show a search input in the toolbar area that filters nodes by label and lineage-highlights matches. Default: <see langword="false"/>.
+	/// </summary>
+	public bool? EnableSearch { get; set; }
+
+	/// <summary>
+	/// Show a breadcrumb trail above the chart that updates on node click; clicking a segment re-centers on that ancestor. Default: <see langword="false"/>.
+	/// </summary>
+	public bool? EnableBreadcrumb { get; set; }
+
+	/// <summary>
+	/// Re-fit the viewBox to the new tree bounds when a node is collapsed or expanded. Default: <see langword="true"/>.
+	/// </summary>
+	public bool? EnableExpandCollapseZoom { get; set; }
+
+	/// <summary>
+	/// Enable Ctrl/Cmd + mouse-wheel (or trackpad pinch) zoom and drag-to-pan on the canvas. Default: <see langword="true"/>.
+	/// </summary>
+	public bool? EnableZoomPan { get; set; }
+
+	/// <summary>
+	/// Node selection behaviour. Leave unset to disable selection (the default). Set to
+	/// <see cref="TreeSelectionMode.Single"/> or <see cref="TreeSelectionMode.Multi"/> to enable it;
+	/// listen for changes via the <c>OnSelectionChange</c> event.
+	/// </summary>
+	public TreeSelectionMode? EnableSelection { get; set; }
+
+	/// <summary>
+	/// Horizontal padding around the rendered tree in pixels. Default: 100.
+	/// </summary>
+	public int? PaddingX { get; set; }
+
+	/// <summary>
+	/// Vertical padding around the rendered tree in pixels. Default: 100.
+	/// </summary>
+	public int? PaddingY { get; set; }
+
+	/// <summary>
+	/// Shape of the connecting lines between nodes. Default: <see cref="ApexTree.EdgeStyle.Orthogonal"/>.
+	/// </summary>
+	public EdgeStyle? EdgeStyle { get; set; }
+
+	/// <summary>
+	/// How edge colors are resolved. Default: <see cref="ApexTree.EdgeColorMode.Default"/>.
+	/// </summary>
+	public EdgeColorMode? EdgeColorMode { get; set; }
+
+	/// <summary>
+	/// Localization and text-direction (RTL) options.
+	/// </summary>
+	public LocaleOptions? Locale { get; set; }
+
+	/// <summary>
 	/// WCAG 2.1 AA accessibility options for the tree chart.
 	/// Controls ARIA role/label semantics and keyboard navigation.
 	/// </summary>

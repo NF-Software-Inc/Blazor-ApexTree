@@ -96,4 +96,21 @@ internal sealed class JsHandler<TItem> : IDisposable
 			});
 		}
 	}
+
+	/// <summary>
+	/// Called from JavaScript when the set of selected nodes changes.
+	/// </summary>
+	/// <param name="selectedIds">The IDs of the currently selected nodes.</param>
+	[JSInvokable]
+	public async Task OnSelectionChanged(string[] selectedIds)
+	{
+		if (ChartReference.OnSelectionChange.HasDelegate)
+		{
+			await ChartReference.OnSelectionChange.InvokeAsync(new NodeSelectionEventArgs
+			{
+				SelectedIds = selectedIds ?? Array.Empty<string>(),
+				Timestamp = DateTime.UtcNow
+			});
+		}
+	}
 }

@@ -179,6 +179,31 @@ public class DataNodeOptions
 	public virtual string? FontColor { get; set; }
 
 	/// <summary>
+	/// Avatar placement for the built-in org-card node template. Default: <see cref="ApexTree.CardImagePosition.Left"/>.
+	/// </summary>
+	public virtual CardImagePosition? CardImagePosition { get; set; }
+
+	/// <summary>
+	/// Render the node's label outside the node bounds (with alignment, offset and rotation) instead of via the node template.
+	/// </summary>
+	public virtual ExternalLabelOptions? ExternalLabel { get; set; }
+
+	/// <summary>
+	/// Toggle expand/collapse when the node itself is clicked (not just the expand/collapse button). Default: <see langword="false"/>.
+	/// </summary>
+	public virtual bool? ExpandCollapseOnNodeClick { get; set; }
+
+	/// <summary>
+	/// CSS box-shadow applied to the node.
+	/// </summary>
+	public virtual string? NodeShadow { get; set; }
+
+	/// <summary>
+	/// CSS box-shadow applied to the node on hover.
+	/// </summary>
+	public virtual string? NodeShadowHover { get; set; }
+
+	/// <summary>
 	/// Pass-through dictionary for any core library options not yet exposed as typed properties.
 	/// Each entry is serialized as a top-level JSON key and forwarded directly to the ApexTree
 	/// JavaScript constructor, enabling forward-compatibility without requiring a new Blazor release.

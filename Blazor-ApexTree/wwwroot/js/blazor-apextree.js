@@ -1,4 +1,4 @@
-import ApexTree from "./apextree.esm.js?ver=1.9.0";
+import ApexTree from "./apextree.esm.js?ver=1.14.0";
 
 /**
  * Export function for Blazor to point to the window.blazor_apextree.
@@ -106,11 +106,51 @@ window.blazorApextree = {
         dotNetRef.invokeMethodAsync("OnNodeExpanded", nodeId);
         return result;
       };
+
+      // Selection change (active only when enableSelection is set)
+      if (typeof graph.onSelectionChange === "function") {
+        graph.onSelectionChange(function (selection) {
+          dotNetRef.invokeMethodAsync("OnSelectionChanged", window.blazorApextree.NormalizeSelection(selection));
+        });
+      }
     }
 
     if (parsed.debug === true) {
       console.log(`Chart ${id} created.`);
     }
+  },
+
+  /**
+   * Normalizes a selection payload from the core library into a flat array of node id strings.
+   * @param {any} selection The raw selection (array of ids, array of node objects, Set, or single value).
+   * @returns {string[]} The selected node ids.
+   */
+  NormalizeSelection: function (selection) {
+    if (selection == null) return [];
+    var items = Array.isArray(selection)
+      ? selection
+      : typeof selection.forEach === "function"
+        ? Array.from(selection)
+        : [selection];
+    return items
+      .map(function (item) {
+        if (typeof item === "string") return item;
+        if (item && typeof item === "object") return item.id || "";
+        return "";
+      })
+      .filter(function (id) { return id !== ""; });
+  },
+
+  /**
+   * Resets the pan/zoom baseline to the current viewBox.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   */
+  ResetPanZoomBase: function (id) {
+    if (this.ChartReferences.has(id) === false) return;
+
+    var graph = this.ChartReferences.get(id);
+
+    if (typeof graph.resetPanZoomBase === "function") graph.resetPanZoomBase();
   },
 
   /**
