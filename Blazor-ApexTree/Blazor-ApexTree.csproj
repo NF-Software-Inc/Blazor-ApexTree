@@ -10,9 +10,9 @@
 		<Authors>ApexCharts</Authors>
 		<Company>ApexCharts</Company>
 		<Copyright>Copyright 2026 $(Company)</Copyright>
-		<Version>10.4.0</Version>
-		<AssemblyVersion>10.4.0.0</AssemblyVersion>
-		<FileVersion>10.4.0.0</FileVersion>
+		<Version>10.5.0</Version>
+		<AssemblyVersion>10.5.0.0</AssemblyVersion>
+		<FileVersion>10.5.0.0</FileVersion>
 		<PackageId>Blazor-ApexTree</PackageId>
 		<PackageTags>Blazor Charts ApexTree Server WebAssembly</PackageTags>
 		<RepositoryUrl>https://github.com/apexcharts/Blazor-ApexTree</RepositoryUrl>
@@ -21,7 +21,7 @@
 			A Blazor wrapper for ApexTree.js.
 		</Description>
 		<PackageReleaseNotes>
-			10.4.0 Update ApexTree core to 1.14.0. Add Theme, EnableSearch, EnableBreadcrumb, EnableExpandCollapseZoom, EnableZoomPan, EnableSelection (+ OnSelectionChange event), Locale (RTL/messages), PaddingX/Y, EdgeStyle, EdgeColorMode, node-level CardImagePosition, ExternalLabel, ExpandCollapseOnNodeClick, NodeShadow/Hover, the OrgNodeData org-card model, and the ResetPanZoomBaseAsync method
+			10.5.0 Update ApexTree core to 1.14.0. Add Theme, EnableSearch, EnableBreadcrumb, EnableExpandCollapseZoom, EnableZoomPan, EnableSelection (+ OnSelectionChange event), Locale (RTL/messages), PaddingX/Y, EdgeStyle, EdgeColorMode, node-level CardImagePosition, ExternalLabel, ExpandCollapseOnNodeClick, NodeShadow/Hover, the OrgNodeData org-card model, and the ResetPanZoomBaseAsync method
 
 			10.2.0 Update ApexTree core to 1.9.0, add EnableAnimation, ViewPortWidth, ViewPortHeight, collapse badge options, expand/collapse button styling, A11yOptions, Zoom/ExportToSvg/Construct graph API methods, AdditionalOptions for forward-compatibility
 

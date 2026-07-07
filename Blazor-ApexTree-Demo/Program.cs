@@ -19,6 +19,7 @@ builder.Logging.AddConsoleLogger(x =>
 });
 #endif
 
-//ApexTreeLicense.SetLicense("your-commercial-license-key-here");
+// license for the public demo hosted at https://apexcharts.github.io/ (domain-locked, no watermark)
+ApexTreeLicense.SetLicense("APEX-eyJpc3N1ZURhdGUiOiIyMDI2LTA3LTA3IiwiZXhwaXJ5RGF0ZSI6IjIwNTAtMDctMDciLCJwbGFuIjoiZW50ZXJwcmlzZSIsImRvbWFpbnMiOlsiaHR0cHM6Ly9hcGV4Y2hhcnRzLmdpdGh1Yi5pby8iXX0=");
 
 await builder.Build().RunAsync();

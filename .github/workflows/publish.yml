@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  actions: write # allows this workflow to dispatch publish-nuget.yml after tagging
 
 jobs:
   check-release:
@@ -100,6 +101,12 @@ jobs:
           draft: false
           prerelease: false
 
-      # NuGet publishing is handled by publish-nuget.yml, which triggers on the
-      # tag pushed above and authenticates via OIDC trusted publishing (the
-      # trusted policy on nuget.org is scoped to that workflow file).
+      # NuGet publishing is handled by publish-nuget.yml (OIDC trusted publishing;
+      # the trusted policy on nuget.org is scoped to that workflow file). A tag
+      # pushed with GITHUB_TOKEN does NOT trigger tag-listening workflows, so we
+      # dispatch it explicitly. publish-nuget.yml packs the latest tag (the one
+      # created above) and pushes it.
+      - name: Trigger NuGet publish (publish-nuget.yml)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run publish-nuget.yml --ref main
