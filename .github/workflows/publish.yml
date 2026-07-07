@@ -100,51 +100,6 @@ jobs:
           draft: false
           prerelease: false
 
-  publish-nuget:
-    needs: check-release
-    runs-on: ubuntu-latest
-    environment: nuget-publishing
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.check-release.outputs.new_version }}
-          fetch-depth: 0
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "10.0.x"
-
-      - name: Restore dependencies
-        run: dotnet restore Blazor-ApexTree/Blazor-ApexTree.csproj
-
-      - name: Build
-        run: |
-          dotnet build Blazor-ApexTree/Blazor-ApexTree.csproj \
-            --configuration Release \
-            --no-restore \
-            /p:Version=${{ needs.check-release.outputs.new_version_number }}
-
-      - name: Pack
-        run: |
-          dotnet pack Blazor-ApexTree/Blazor-ApexTree.csproj \
-            --configuration Release \
-            --no-build \
-            --output ./artifacts \
-            /p:Version=${{ needs.check-release.outputs.new_version_number }}
-
-      - name: Publish to NuGet
-        run: |
-          dotnet nuget push ./artifacts/*.nupkg \
-            --source https://api.nuget.org/v3/index.json \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
-            --skip-duplicate
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: nuget-package
-          path: ./artifacts/*.nupkg
-          retention-days: 30
+      # NuGet publishing is handled by publish-nuget.yml, which triggers on the
+      # tag pushed above and authenticates via OIDC trusted publishing (the
+      # trusted policy on nuget.org is scoped to that workflow file).

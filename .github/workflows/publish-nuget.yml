@@ -58,10 +58,17 @@ jobs:
             --output ./artifacts \
             /p:Version=${{ steps.get_version.outputs.VERSION }}
 
+      - name: NuGet login (OIDC -> short-lived API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: apexcharts
+
       - name: Publish to NuGet (Trusted Publishing)
         run: |
           dotnet nuget push ./artifacts/*.nupkg \
             --source https://api.nuget.org/v3/index.json \
+            --api-key ${{ steps.login.outputs.NUGET_API_KEY }} \
             --skip-duplicate
 
       - name: Upload artifacts
