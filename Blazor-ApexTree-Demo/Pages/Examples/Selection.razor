@@ -1,0 +1,59 @@
+@page "/selection"
+@using ApexTree
+@inherits ComponentBase
+
+<PageTitle>Node Selection Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Node Selection</h1>
+        <p class="subtitle is-6">Set <code>EnableSelection</code> to <code>Single</code> or <code>Multi</code> to let users select nodes. The <code>OnSelectionChange</code> event reports the selected ids (apextree 1.12+).</p>
+
+        <div class="notification is-info is-light">
+            <p><strong>Selected ids:</strong> @(SelectedIds.Any() ? string.Join(", ", SelectedIds) : "None")</p>
+            <p><strong>Change events:</strong> @ChangeCount</p>
+        </div>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree TItem="string" Parent="ParentNode" Options="Options" OnSelectionChange="HandleSelectionChange" />
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private DataNode<string>? ParentNode;
+    private IEnumerable<string> SelectedIds = Array.Empty<string>();
+    private int ChangeCount;
+
+    private readonly ApexTreeOptions Options = new()
+    {
+        Width = 100,
+        WidthUnits = LengthUnits.Percent,
+        Height = 55,
+        HeightUnits = LengthUnits.Viewport,
+        EnableSelection = TreeSelectionMode.Multi,
+        EnableToolbar = true
+    };
+
+    protected override void OnInitialized()
+    {
+        ParentNode = new DataNode<string>
+        {
+            Id = "root", Data = "Board",
+            Children =
+            [
+                new() { Id = "ops", Data = "Operations", Children = [ new() { Id = "ops-a", Data = "Logistics" }, new() { Id = "ops-b", Data = "Support" } ] },
+                new() { Id = "prod", Data = "Product", Children = [ new() { Id = "prod-a", Data = "Design" }, new() { Id = "prod-b", Data = "Research" } ] },
+            ]
+        };
+    }
+
+    private void HandleSelectionChange(NodeSelectionEventArgs args)
+    {
+        SelectedIds = args.SelectedIds;
+        ChangeCount++;
+    }
+}

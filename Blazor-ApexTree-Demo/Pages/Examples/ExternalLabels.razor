@@ -1,0 +1,56 @@
+@page "/external-labels"
+@using ApexTree
+@inherits ComponentBase
+
+<PageTitle>External Labels Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">External Labels</h1>
+        <p class="subtitle is-6">Render node labels outside the node marker, with alignment, offset and rotation (apextree 1.12+). Useful for compact marker nodes with readable captions.</p>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree TItem="string" Parent="ParentNode" Options="Options" />
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private DataNode<string>? ParentNode;
+
+    private readonly ApexTreeOptions Options = new()
+    {
+        Width = 100,
+        WidthUnits = LengthUnits.Percent,
+        Height = 55,
+        HeightUnits = LengthUnits.Viewport,
+        NodeWidth = 16,
+        NodeHeight = 16,
+        BorderRadius = 8,
+        PaddingY = 140,
+        ExternalLabel = new ExternalLabelOptions
+        {
+            Enabled = true,
+            Align = ExternalLabelAlign.Center,
+            VerticalAlign = ExternalLabelVerticalAlign.Bottom,
+            OffsetY = 6
+        },
+        EnableToolbar = true
+    };
+
+    protected override void OnInitialized()
+    {
+        ParentNode = new DataNode<string>
+        {
+            Id = "root", Data = "Release",
+            Children =
+            [
+                new() { Id = "a", Data = "Plan", Children = [ new() { Id = "a1", Data = "Scope" }, new() { Id = "a2", Data = "Design" } ] },
+                new() { Id = "b", Data = "Build", Children = [ new() { Id = "b1", Data = "Code" }, new() { Id = "b2", Data = "Test" } ] },
+            ]
+        };
+    }
+}

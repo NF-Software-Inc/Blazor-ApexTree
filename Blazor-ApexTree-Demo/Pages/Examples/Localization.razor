@@ -1,0 +1,71 @@
+@page "/localization"
+@using ApexTree
+@inherits ComponentBase
+
+<PageTitle>Localization &amp; RTL Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Localization &amp; RTL</h1>
+        <p class="subtitle is-6">The <code>Locale</code> option controls text direction and user-facing strings (apextree 1.14+). Switch to RTL to mirror the whole tree and its search/breadcrumb chrome.</p>
+
+        <div class="field mb-4">
+            <div class="control">
+                <label class="label is-small">Direction</label>
+                <div class="select is-small">
+                    <select @bind="Direction" @bind:after="Rebuild">
+                        <option value="ltr">ltr (left to right)</option>
+                        <option value="rtl">rtl (right to left)</option>
+                        <option value="auto">auto</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree TItem="string" Parent="ParentNode" Options="Options" />
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private DataNode<string>? ParentNode;
+    private string Direction = "rtl";
+
+    private ApexTreeOptions Options = new();
+
+    protected override void OnInitialized()
+    {
+        ParentNode = new DataNode<string>
+        {
+            Id = "root", Data = "الإدارة",
+            Children =
+            [
+                new() { Id = "a", Data = "التقنية" },
+                new() { Id = "b", Data = "المبيعات" },
+            ]
+        };
+        Rebuild();
+    }
+
+    private void Rebuild()
+    {
+        Options = new ApexTreeOptions
+        {
+            Width = 100,
+            WidthUnits = LengthUnits.Percent,
+            Height = 55,
+            HeightUnits = LengthUnits.Viewport,
+            EnableSearch = true,
+            EnableToolbar = true,
+            Locale = new LocaleOptions
+            {
+                Direction = Direction,
+                Messages = new Dictionary<string, string> { ["searchPlaceholder"] = "ابحث عن العقد..." }
+            }
+        };
+    }
+}

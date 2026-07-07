@@ -1,0 +1,75 @@
+@page "/theme-search"
+@using ApexTree
+@inherits ComponentBase
+
+<PageTitle>Theme, Search &amp; Breadcrumb Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Theme, Search &amp; Breadcrumb</h1>
+        <p class="subtitle is-6">Toggle the built-in theme preset and the search/breadcrumb chrome (apextree 1.12+). Rebuilding the options re-renders the tree.</p>
+
+        <div class="field is-grouped mb-4">
+            <div class="control">
+                <label class="label is-small">Theme</label>
+                <div class="select is-small">
+                    <select @bind="SelectedTheme" @bind:after="Rebuild">
+                        <option value="Light">Light</option>
+                        <option value="Dark">Dark</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control">
+                <label class="checkbox is-small"><input type="checkbox" @bind="EnableSearch" @bind:after="Rebuild" /> Search</label>
+            </div>
+            <div class="control">
+                <label class="checkbox is-small"><input type="checkbox" @bind="EnableBreadcrumb" @bind:after="Rebuild" /> Breadcrumb</label>
+            </div>
+        </div>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree TItem="string" Parent="ParentNode" Options="Options" />
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private DataNode<string>? ParentNode;
+    private string SelectedTheme = "Light";
+    private bool EnableSearch = true;
+    private bool EnableBreadcrumb = true;
+
+    private ApexTreeOptions Options = new();
+
+    protected override void OnInitialized()
+    {
+        ParentNode = new DataNode<string>
+        {
+            Id = "root", Data = "Company",
+            Children =
+            [
+                new() { Id = "eng", Data = "Engineering", Children = [ new() { Id = "eng-a", Data = "Backend" }, new() { Id = "eng-b", Data = "Frontend" } ] },
+                new() { Id = "mkt", Data = "Marketing", Children = [ new() { Id = "mkt-a", Data = "Content" }, new() { Id = "mkt-b", Data = "Growth" } ] },
+            ]
+        };
+        Rebuild();
+    }
+
+    private void Rebuild()
+    {
+        Options = new ApexTreeOptions
+        {
+            Width = 100,
+            WidthUnits = LengthUnits.Percent,
+            Height = 55,
+            HeightUnits = LengthUnits.Viewport,
+            Theme = SelectedTheme == "Dark" ? Theme.Dark : Theme.Light,
+            EnableSearch = EnableSearch,
+            EnableBreadcrumb = EnableBreadcrumb,
+            EnableToolbar = true
+        };
+    }
+}

@@ -1,0 +1,74 @@
+@page "/org-card"
+@using ApexTree
+@inherits ComponentBase
+
+<PageTitle>Org Card Template Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Org-Chart Card Template</h1>
+        <p class="subtitle is-6">Attach a structured <code>OrgNodeData</code> payload to each node and the built-in card renders an avatar, name, title, subtitle, status badge, accent stripe, and metadata rows (apextree 1.12+). Set <code>CardImagePosition</code> to place the avatar left or on top.</p>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree TItem="OrgNodeData" Parent="ParentNode" Options="Options" />
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private DataNode<OrgNodeData>? ParentNode;
+
+    private readonly ApexTreeOptions Options = new()
+    {
+        Width = 100,
+        WidthUnits = LengthUnits.Percent,
+        Height = 60,
+        HeightUnits = LengthUnits.Viewport,
+        NodeWidth = 260,
+        NodeHeight = 100,
+        CardImagePosition = CardImagePosition.Left,
+        EnableToolbar = true,
+        EnableExpandCollapse = true
+    };
+
+    protected override void OnInitialized()
+    {
+        ParentNode = new DataNode<OrgNodeData>
+        {
+            Id = "ceo",
+            Data = new OrgNodeData
+            {
+                Name = "Alice Martin", Title = "Chief Executive Officer", Subtitle = "Executive",
+                ImageUrl = "https://i.pravatar.cc/80?img=1", AccentColor = "#5C6BC0",
+                Badge = new OrgNodeBadge { Text = "Active", Color = "#22c55e" },
+                Meta = new() { new OrgNodeMeta { Icon = "bi bi-people", Label = "42 reports" } }
+            },
+            Children =
+            [
+                new()
+                {
+                    Id = "cto",
+                    Data = new OrgNodeData
+                    {
+                        Name = "Ben Cole", Title = "CTO", Subtitle = "Technology",
+                        ImageUrl = "https://i.pravatar.cc/80?img=12", AccentColor = "#26A69A",
+                        Meta = new() { new OrgNodeMeta { Icon = "bi bi-code-slash", Label = "Engineering" } }
+                    }
+                },
+                new()
+                {
+                    Id = "cfo",
+                    Data = new OrgNodeData
+                    {
+                        Name = "Carol Diaz", Title = "CFO", Subtitle = "Finance",
+                        ImageUrl = "https://i.pravatar.cc/80?img=5", AccentColor = "#EF5350",
+                        Badge = new OrgNodeBadge { Text = "On leave", Color = "#f59e0b" }
+                    }
+                },
+            ]
+        };
+    }
+}
