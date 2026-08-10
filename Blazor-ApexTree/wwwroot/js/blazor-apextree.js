@@ -1,4 +1,4 @@
-import ApexTree from "./apextree.esm.js?ver=1.14.0";
+import ApexTree from "./apextree.esm.js?ver=2.0.0";
 
 /**
  * Export function for Blazor to point to the window.blazor_apextree.
@@ -65,7 +65,7 @@ window.blazorApextree = {
     }
 
     var tree = new ApexTree(container, parsed);
-    var graph = tree.render(data);
+    var graph = tree.render(window.blazorApextree.AsData(data));
 
     this.ChartReferences.set(id, graph);
 
@@ -266,7 +266,216 @@ window.blazorApextree = {
 
     var graph = this.ChartReferences.get(id);
 
-    graph.construct(data);
+    graph.construct(this.AsData(data));
+  },
+
+  /**
+   * Normalizes tree data arriving from .NET into an object.
+   *
+   * The C# side is not consistent about this: the initial CreateChart passes the node graph as an
+   * object (Blazor serializes it), while Construct/RebuildChart/UpdateData hand over a JSON string
+   * produced by ChartSerializer so the wrapper controls naming and the "@eval" convention. Passing
+   * a raw string through to the core silently does nothing, because it looks for an .id property.
+   * @param {any} data Either a JSON string or an already-parsed object.
+   */
+  AsData: function (data) {
+    return typeof data === "string" ? this.Deserialize(data) : data;
+  },
+
+  /**
+   * Returns the graph for an id, or null when the chart is gone or the core is too old to have
+   * the requested method. Keeps every call below a one-liner and makes a missing method a no-op
+   * rather than a TypeError, which matters because the bundled core can be newer than a host
+   * page's cached copy.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   * @param {string} method The graph method about to be called.
+   */
+  GraphFor: function (id, method) {
+    if (this.ChartReferences.has(id) === false) return null;
+
+    var graph = this.ChartReferences.get(id);
+
+    if (typeof graph[method] !== "function") {
+      console.warn(`ApexTree: graph.${method} is unavailable in the loaded core.`);
+      return null;
+    }
+
+    return graph;
+  },
+
+  /**
+   * Diffs the tree against a new dataset and animates the difference: surviving nodes spring to
+   * their new positions, new ids grow in, departed ones retract. Collapse state, selection, focus
+   * and expanded cards all survive. Prefer this over Construct, which rebuilds.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   * @param {any} data The new serialized tree data.
+   */
+  UpdateData: function (id, data) {
+    var graph = this.GraphFor(id, "updateData");
+    if (graph) graph.updateData(this.AsData(data));
+  },
+
+  /**
+   * Expands every node in the tree.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   */
+  ExpandAll: function (id) {
+    var graph = this.GraphFor(id, "expandAll");
+    if (graph) graph.expandAll();
+  },
+
+  /**
+   * Collapses every node in the tree.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   */
+  CollapseAll: function (id) {
+    var graph = this.GraphFor(id, "collapseAll");
+    if (graph) graph.collapseAll();
+  },
+
+  /**
+   * Expands the tree down to the given depth and collapses everything deeper.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   * @param {number} depth The depth to expand to, with the root at 0.
+   */
+  ExpandToDepth: function (id, depth) {
+    var graph = this.GraphFor(id, "expandToDepth");
+    if (graph) graph.expandToDepth(depth);
+  },
+
+  /**
+   * Expands a node and everything beneath it.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   * @param {string} nodeId The node to expand.
+   */
+  ExpandSubtree: function (id, nodeId) {
+    var graph = this.GraphFor(id, "expandSubtree");
+    if (graph) graph.expandSubtree(nodeId);
+  },
+
+  /**
+   * Collapses a node and everything beneath it.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   * @param {string} nodeId The node to collapse.
+   */
+  CollapseSubtree: function (id, nodeId) {
+    var graph = this.GraphFor(id, "collapseSubtree");
+    if (graph) graph.collapseSubtree(nodeId);
+  },
+
+  /**
+   * Spotlights a node: dims everything outside its lineage and visible subtree, and frames it.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   * @param {string} nodeId The node to spotlight.
+   */
+  Focus: function (id, nodeId) {
+    var graph = this.GraphFor(id, "focus");
+    if (graph) graph.focus(nodeId);
+  },
+
+  /**
+   * Clears the spotlight and restores the full view.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   */
+  ClearFocus: function (id) {
+    var graph = this.GraphFor(id, "clearFocus");
+    if (graph) graph.clearFocus();
+  },
+
+  /**
+   * Returns the spotlighted node id, or null when nothing is focused.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   */
+  GetFocusedNodeId: function (id) {
+    var graph = this.GraphFor(id, "getFocusedNodeId");
+    return graph ? (graph.getFocusedNodeId() ?? null) : null;
+  },
+
+  /**
+   * Flows an animated dash along the edges from the root to each of the given nodes.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   * @param {string[]} nodeIds The target nodes.
+   */
+  SetActivePath: function (id, nodeIds) {
+    var graph = this.GraphFor(id, "setActivePath");
+    if (graph) graph.setActivePath(nodeIds);
+  },
+
+  /**
+   * Clears the active path.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   */
+  ClearActivePath: function (id) {
+    var graph = this.GraphFor(id, "clearActivePath");
+    if (graph) graph.clearActivePath();
+  },
+
+  /**
+   * Returns the node ids currently on the active path.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   */
+  GetActivePath: function (id) {
+    var graph = this.GraphFor(id, "getActivePath");
+    return graph ? (graph.getActivePath() ?? []) : [];
+  },
+
+  /**
+   * Expands a node's card in place to reveal its detail section. Distinct from expanding children.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   * @param {string} nodeId The node whose card to expand.
+   */
+  ExpandCard: function (id, nodeId) {
+    var graph = this.GraphFor(id, "expandCard");
+    if (graph) graph.expandCard(nodeId);
+  },
+
+  /**
+   * Collapses a node's card back to its summary.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   * @param {string} nodeId The node whose card to collapse.
+   */
+  CollapseCard: function (id, nodeId) {
+    var graph = this.GraphFor(id, "collapseCard");
+    if (graph) graph.collapseCard(nodeId);
+  },
+
+  /**
+   * Toggles a node's card between summary and detail.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   * @param {string} nodeId The node whose card to toggle.
+   */
+  ToggleCard: function (id, nodeId) {
+    var graph = this.GraphFor(id, "toggleCard");
+    if (graph) graph.toggleCard(nodeId);
+  },
+
+  /**
+   * Replaces the set of expanded cards in one pass.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   * @param {string[]} nodeIds The nodes whose cards should be expanded.
+   */
+  SetExpandedCards: function (id, nodeIds) {
+    var graph = this.GraphFor(id, "setExpandedCards");
+    if (graph) graph.setExpandedCards(nodeIds);
+  },
+
+  /**
+   * Returns the ids of the nodes whose cards are expanded.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   */
+  GetExpandedCards: function (id) {
+    var graph = this.GraphFor(id, "getExpandedCards");
+    return graph ? (graph.getExpandedCards() ?? []) : [];
+  },
+
+  /**
+   * Centres the camera on a node, keeping the current zoom.
+   * @param {string} id The HTML id of the element the chart is attached to.
+   * @param {string} nodeId The node to centre on.
+   */
+  CenterOnNode: function (id, nodeId) {
+    var graph = this.GraphFor(id, "centerOnNode");
+    if (graph) graph.centerOnNode(nodeId);
   },
 
   /**

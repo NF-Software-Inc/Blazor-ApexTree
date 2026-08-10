@@ -56,4 +56,16 @@ public class ExternalLabelOptions
 	/// (top-to-bottom) and -90 for bottom-to-top text (default: 0).
 	/// </summary>
 	public int? Rotation { get; set; }
+
+	/// <summary>
+	/// How colliding labels are resolved. Default: <see cref="ExternalLabelCollision.None"/>, which
+	/// draws every label even where they overlap.
+	/// </summary>
+	/// <remarks>
+	/// Chiefly for <see cref="Direction.Radial"/>, where inner rings crowd quickly:
+	/// <see cref="ExternalLabelCollision.Hide"/> culls what will not fit on each ring, and
+	/// <see cref="ExternalLabelCollision.Leaves"/> labels only leaf nodes. Requires ApexTree core
+	/// 2.0.0 or later.
+	/// </remarks>
+	public ExternalLabelCollision? CollisionStrategy { get; set; }
 }

@@ -1,0 +1,139 @@
+@page "/batch-verbs"
+@using ApexTree
+@inherits ComponentBase
+
+<PageTitle>Batch Verbs Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Batch Verbs and Count Badges</h1>
+        <p class="subtitle is-6">
+            One call each for <code>ExpandAll</code>, <code>CollapseAll</code>,
+            <code>ExpandToDepth</code>, <code>ExpandSubtree</code> and <code>CollapseSubtree</code>,
+            instead of looping over node ids. <code>CountBadgeEnabled</code> puts a persistent
+            descendant count on every node, independent of collapse state (apextree 2.0+).
+        </p>
+
+        <div class="buttons mb-4">
+            <button class="button is-link" @onclick="ExpandEverything">
+                <span class="material-icons icon mr-1">unfold_more</span>
+                <span>Expand all</span>
+            </button>
+            <button class="button is-link is-outlined" @onclick="CollapseEverything">
+                <span class="material-icons icon mr-1">unfold_less</span>
+                <span>Collapse all</span>
+            </button>
+            <button class="button is-light" @onclick="@(() => ToDepth(1))">
+                <span>To depth 1</span>
+            </button>
+            <button class="button is-light" @onclick="@(() => ToDepth(2))">
+                <span>To depth 2</span>
+            </button>
+            <button class="button is-warning is-outlined" @onclick="@(() => Subtree("emea", expand: true))">
+                <span>Expand EMEA subtree</span>
+            </button>
+            <button class="button is-warning is-outlined" @onclick="@(() => Subtree("emea", expand: false))">
+                <span>Collapse EMEA subtree</span>
+            </button>
+        </div>
+
+        <div class="notification is-info is-light">
+            <p>
+                Each badge counts every descendant beneath its node. Switch
+                <code>CountBadgeSource</code> to <code>Children</code> to count only direct reports, or
+                to <code>Data</code> to read a number straight off your own node data.
+            </p>
+        </div>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree @ref="TreeRef" TItem="string" Parent="ParentNode" Options="Options" />
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private ApexTree<string>? TreeRef;
+    private DataNode<string>? ParentNode;
+
+    private readonly ApexTreeOptions Options = new()
+    {
+        Width = 100,
+        WidthUnits = LengthUnits.Percent,
+        Height = 68,
+        HeightUnits = LengthUnits.Viewport,
+        NodeWidth = 130,
+        NodeHeight = 42,
+        SiblingSpacing = 22,
+        EnableExpandCollapse = true,
+        EnableToolbar = true,
+        CountBadgeEnabled = true,
+        CountBadgeSource = CountBadgeSource.Descendants,
+        CountBadgeThreshold = 1,
+        // The expand/collapse control is themeable in 2.0: give the glyph its own colour and
+        // a halo in the page background so it reads against both the card border and the edge.
+        ExpandCollapseButtonSize = 16,
+        ExpandCollapseButtonIconColor = "#475467",
+        ExpandCollapseButtonHaloColor = "#FFFFFF"
+    };
+
+    protected override void OnInitialized()
+    {
+        ParentNode = new DataNode<string>
+        {
+            Id = "global", Data = "Global",
+            Children =
+            [
+                Region("emea", "EMEA", ("emea-uk", "UK"), ("emea-de", "Germany"), ("emea-fr", "France")),
+                Region("amer", "Americas", ("amer-us", "United States"), ("amer-br", "Brazil")),
+                Region("apac", "APAC", ("apac-jp", "Japan"), ("apac-au", "Australia"), ("apac-sg", "Singapore"))
+            ]
+        };
+    }
+
+    private static DataNode<string> Region(string id, string name, params (string Id, string Name)[] countries) => new()
+    {
+        Id = id,
+        Data = name,
+        Children = [.. countries.Select(c => new DataNode<string>
+        {
+            Id = c.Id,
+            Data = c.Name,
+            Children =
+            [
+                new() { Id = $"{c.Id}-sales", Data = "Sales" },
+                new() { Id = $"{c.Id}-service", Data = "Service" }
+            ]
+        })]
+    };
+
+    private async Task ExpandEverything()
+    {
+        if (TreeRef != null)
+            await TreeRef.ExpandAll();
+    }
+
+    private async Task CollapseEverything()
+    {
+        if (TreeRef != null)
+            await TreeRef.CollapseAll();
+    }
+
+    private async Task ToDepth(int depth)
+    {
+        if (TreeRef != null)
+            await TreeRef.ExpandToDepth(depth);
+    }
+
+    private async Task Subtree(string id, bool expand)
+    {
+        if (TreeRef == null) return;
+
+        if (expand)
+            await TreeRef.ExpandSubtree(id);
+        else
+            await TreeRef.CollapseSubtree(id);
+    }
+}

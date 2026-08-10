@@ -1,0 +1,114 @@
+@page "/semantic-zoom"
+@using ApexTree
+@inherits ComponentBase
+
+<PageTitle>Semantic Zoom Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Semantic Zoom</h1>
+        <p class="subtitle is-6">
+            With <code>SemanticZoom</code> enabled, nodes swap what they render based on how large they
+            appear on screen: the full card, then a name-and-role plate below
+            <code>CompactBelow</code>, then a coloured slab below <code>DotBelow</code>. Node geometry
+            is fixed across tiers, so nothing moves and the camera is untouched (apextree 2.0+).
+        </p>
+
+        <div class="buttons mb-4">
+            <button class="button is-link" @onclick="@(() => Zoom(0.25))">
+                <span class="material-icons icon mr-1">zoom_in</span>
+                <span>Zoom in</span>
+            </button>
+            <button class="button is-link is-outlined" @onclick="@(() => Zoom(-0.25))">
+                <span class="material-icons icon mr-1">zoom_out</span>
+                <span>Zoom out</span>
+            </button>
+            <button class="button is-light" @onclick="Fit">
+                <span class="material-icons icon mr-1">fit_screen</span>
+                <span>Fit</span>
+            </button>
+        </div>
+
+        <div class="notification is-info is-light">
+            <p>
+                Zoom out a few steps and watch the cards degrade rather than turn into unreadable
+                slivers. Thresholds are in on-screen pixels of node width, so they behave the same at
+                any container size.
+            </p>
+        </div>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree @ref="TreeRef" TItem="OrgNodeData" Parent="ParentNode" Options="Options" />
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private ApexTree<OrgNodeData>? TreeRef;
+    private DataNode<OrgNodeData>? ParentNode;
+
+    private readonly ApexTreeOptions Options = new()
+    {
+        Width = 100,
+        WidthUnits = LengthUnits.Percent,
+        Height = 65,
+        HeightUnits = LengthUnits.Viewport,
+        NodeWidth = 160,
+        NodeHeight = 80,
+        SiblingSpacing = 30,
+        ChildrenSpacing = 80,
+        EnableToolbar = true,
+        EnableZoomPan = true,
+        SemanticZoom = new SemanticZoomOptions
+        {
+            Enabled = true,
+            CompactBelow = 110,
+            DotBelow = 55
+        }
+    };
+
+    protected override void OnInitialized()
+    {
+        ParentNode = new DataNode<OrgNodeData>
+        {
+            Id = "ceo",
+            Data = new OrgNodeData { Name = "Ada Lovelace", Title = "Chief Executive", AccentColor = "#5C6BC0" },
+            Children =
+            [
+                Person("eng", "Brij Patel", "VP Engineering", "#26A69A",
+                    Person("eng-a", "Dev Kumar", "Staff Engineer", "#26A69A"),
+                    Person("eng-b", "Esme Fisher", "Senior Engineer", "#26A69A"),
+                    Person("eng-c", "Frida Nolan", "Engineer", "#26A69A")),
+                Person("ops", "Cleo Mensah", "VP Operations", "#EF6C00",
+                    Person("ops-a", "Gus Romano", "Support Lead", "#EF6C00"),
+                    Person("ops-b", "Hana Sato", "Logistics", "#EF6C00")),
+                Person("fin", "Iris Bello", "VP Finance", "#8E24AA",
+                    Person("fin-a", "Jon Alvarez", "Controller", "#8E24AA"),
+                    Person("fin-b", "Kira Haas", "Analyst", "#8E24AA"))
+            ]
+        };
+    }
+
+    private static DataNode<OrgNodeData> Person(
+        string id, string name, string title, string accent, params DataNode<OrgNodeData>[] children) => new()
+    {
+        Id = id,
+        Data = new OrgNodeData { Name = name, Title = title, AccentColor = accent },
+        Children = children.Length == 0 ? null : [.. children]
+    };
+
+    private async Task Zoom(double factor)
+    {
+        if (TreeRef != null)
+            await TreeRef.Zoom(factor);
+    }
+
+    private async Task Fit()
+    {
+        if (TreeRef != null)
+            await TreeRef.FitScreen();
+    }
+}

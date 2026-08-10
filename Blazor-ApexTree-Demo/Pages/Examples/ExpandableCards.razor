@@ -1,0 +1,167 @@
+@page "/expandable-cards"
+@using ApexTree
+@inherits ComponentBase
+
+<PageTitle>Expandable Cards Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Expandable Cards</h1>
+        <p class="subtitle is-6">
+            A card can expand in place to reveal a detail section, which is separate from expanding a
+            node's children. Give an <code>OrgNodeData</code> any of <code>Stats</code>,
+            <code>Progress</code>, <code>Actions</code> or <code>Details</code> and the built-in card
+            grows a chevron. <code>AutoNodeHeight</code> is what lets it grow to fit (apextree 2.0+).
+        </p>
+
+        <div class="buttons mb-4">
+            <button class="button is-link" @onclick="@(() => Toggle("eng"))">
+                <span class="material-icons icon mr-1">unfold_more</span>
+                <span>Toggle Engineering card</span>
+            </button>
+            <button class="button is-link is-outlined" @onclick="ExpandTwo">
+                <span>Expand two at once</span>
+            </button>
+            <button class="button is-light" @onclick="CollapseEvery">
+                <span>Collapse all cards</span>
+            </button>
+            <button class="button is-light" @onclick="ReadExpanded">
+                <span class="material-icons icon mr-1">help_outline</span>
+                <span>Read expanded set</span>
+            </button>
+        </div>
+
+        <div class="notification is-info is-light">
+            <p><strong>GetExpandedCards:</strong> @(Reported.Length > 0 ? string.Join(", ", Reported) : "(none read yet)")</p>
+            <p>Clicking a card body also toggles it, because <code>ClickToExpand</code> is on.</p>
+        </div>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree @ref="TreeRef" TItem="OrgNodeData" Parent="ParentNode" Options="Options" />
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private ApexTree<OrgNodeData>? TreeRef;
+    private DataNode<OrgNodeData>? ParentNode;
+    private string[] Reported = [];
+
+    private readonly ApexTreeOptions Options = new()
+    {
+        Width = 100,
+        WidthUnits = LengthUnits.Percent,
+        Height = 70,
+        HeightUnits = LengthUnits.Viewport,
+        NodeWidth = 210,
+        NodeHeight = 96,
+        SiblingSpacing = 26,
+        ChildrenSpacing = 70,
+        EnableToolbar = true,
+        // Without measured heights the card still toggles, but the revealed detail
+        // would clip: the node's box could not grow.
+        AutoNodeHeight = new AutoNodeHeightOptions { Enabled = true, MaxHeight = 320 },
+        CardExpansion = new CardExpansionOptions { ClickToExpand = true }
+    };
+
+    protected override void OnInitialized()
+    {
+        ParentNode = new DataNode<OrgNodeData>
+        {
+            Id = "ceo",
+            Data = new OrgNodeData
+            {
+                Name = "Ada Lovelace",
+                Title = "Chief Executive",
+                AccentColor = "#5C6BC0",
+                Tags = ["board", "founder"],
+                Stats =
+                [
+                    new() { Label = "Reports", Value = "3" },
+                    new() { Label = "Tenure", Value = "6 yrs" }
+                ],
+                Details = "Chairs the operating review and owns the annual plan."
+            },
+            Children =
+            [
+                new()
+                {
+                    Id = "eng",
+                    Data = new OrgNodeData
+                    {
+                        Name = "Brij Patel",
+                        Title = "VP Engineering",
+                        AccentColor = "#26A69A",
+                        Tags = ["platform", "hiring"],
+                        Stats =
+                        [
+                            new() { Label = "Team", Value = "18" },
+                            new() { Label = "Open roles", Value = "4" }
+                        ],
+                        Progress = new OrgNodeProgress { Value = 72, Label = "Roadmap delivered", Color = "#26A69A" },
+                        Actions = [ new() { Label = "Org page", Href = "#" }, new() { Label = "Roadmap", Href = "#" } ]
+                    },
+                    Children =
+                    [
+                        new()
+                        {
+                            Id = "eng-a",
+                            Data = new OrgNodeData
+                            {
+                                Name = "Dev Kumar", Title = "Staff Engineer", AccentColor = "#26A69A",
+                                Stats = [ new() { Label = "Focus", Value = "Runtime" } ]
+                            }
+                        },
+                        new()
+                        {
+                            Id = "eng-b",
+                            Data = new OrgNodeData { Name = "Esme Fisher", Title = "Senior Engineer", AccentColor = "#26A69A" }
+                        }
+                    ]
+                },
+                new()
+                {
+                    Id = "ops",
+                    Data = new OrgNodeData
+                    {
+                        Name = "Cleo Mensah",
+                        Title = "VP Operations",
+                        AccentColor = "#EF6C00",
+                        Tags = ["support"],
+                        Progress = new OrgNodeProgress { Value = 45, Label = "SLA attainment", Color = "#EF6C00" },
+                        Details = "Owns the support rota and the vendor contracts."
+                    }
+                }
+            ]
+        };
+    }
+
+    private async Task Toggle(string id)
+    {
+        if (TreeRef != null)
+            await TreeRef.ToggleCard(id);
+    }
+
+    private async Task ExpandTwo()
+    {
+        if (TreeRef != null)
+            await TreeRef.SetExpandedCards(["ceo", "ops"]);
+    }
+
+    private async Task CollapseEvery()
+    {
+        if (TreeRef != null)
+            await TreeRef.SetExpandedCards([]);
+
+        Reported = [];
+    }
+
+    private async Task ReadExpanded()
+    {
+        if (TreeRef != null)
+            Reported = await TreeRef.GetExpandedCards();
+    }
+}

@@ -10,7 +10,6 @@ public partial class ExpandCollapse : ComponentBase
 {
 	private ApexTree<string>? TreeRef;
 	private DataNode<string>? ParentNode;
-	private readonly List<string> ParentNodeIds = [];
 
 	private readonly ApexTreeOptions Options = new()
 	{
@@ -66,35 +65,19 @@ public partial class ExpandCollapse : ComponentBase
 			]
 		};
 
-		// Collect IDs of nodes that have children (can be collapsed/expanded)
-		CollectParentIds(ParentNode);
 	}
 
-	private void CollectParentIds(DataNode<string> node)
-	{
-		if (node.Children is { Count: > 0 })
-		{
-			if (node.Id != null)
-				ParentNodeIds.Add(node.Id);
-
-			foreach (var child in node.Children)
-				CollectParentIds(child);
-		}
-	}
-
+	// One core call each since apextree 2.0. This previously walked the tree collecting every
+	// parent id and then issued one interop call per node, so each node reflowed separately.
 	private async Task CollapseAll()
 	{
-		if (TreeRef == null) return;
-
-		foreach (var id in ParentNodeIds)
-			await TreeRef.CollapseNode(id);
+		if (TreeRef != null)
+			await TreeRef.CollapseAll();
 	}
 
 	private async Task ExpandAll()
 	{
-		if (TreeRef == null) return;
-
-		foreach (var id in ParentNodeIds)
-			await TreeRef.ExpandNode(id);
+		if (TreeRef != null)
+			await TreeRef.ExpandAll();
 	}
 }

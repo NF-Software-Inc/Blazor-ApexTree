@@ -46,6 +46,90 @@ public class OrgNodeData
 	/// Extra metadata rows rendered under the title/subtitle as icon + label lines.
 	/// </summary>
 	public List<OrgNodeMeta>? Meta { get; set; }
+
+	/// <summary>
+	/// Chip row shown in the card summary, always visible. Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	public List<string>? Tags { get; set; }
+
+	/// <summary>
+	/// Key/value rows revealed only when the card is expanded. Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	/// <remarks>
+	/// Supplying any of <see cref="Stats"/>, <see cref="Progress"/>, <see cref="Actions"/> or
+	/// <see cref="Details"/> is what makes the built-in card grow an expand chevron. See
+	/// <see cref="CardExpansionOptions"/>, and enable <see cref="ApexTreeOptions.AutoNodeHeight"/>
+	/// so the card can grow to fit them.
+	/// </remarks>
+	public List<OrgNodeStat>? Stats { get; set; }
+
+	/// <summary>
+	/// A meter bar revealed when the card is expanded. Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	public OrgNodeProgress? Progress { get; set; }
+
+	/// <summary>
+	/// Action links revealed when the card is expanded. Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	public List<OrgNodeAction>? Actions { get; set; }
+
+	/// <summary>
+	/// Free-form extra text revealed when the card is expanded. Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	public string? Details { get; set; }
+}
+
+/// <summary>
+/// A key/value row in the detail section of an <see cref="OrgNodeData"/> card.
+/// </summary>
+public class OrgNodeStat
+{
+	/// <summary>
+	/// Row label, shown on the left.
+	/// </summary>
+	public string? Label { get; set; }
+
+	/// <summary>
+	/// Row value, shown on the right.
+	/// </summary>
+	public string? Value { get; set; }
+}
+
+/// <summary>
+/// A meter bar in the detail section of an <see cref="OrgNodeData"/> card.
+/// </summary>
+public class OrgNodeProgress
+{
+	/// <summary>
+	/// Fill amount, from 0 to 100.
+	/// </summary>
+	public double? Value { get; set; }
+
+	/// <summary>
+	/// Optional caption shown alongside the bar.
+	/// </summary>
+	public string? Label { get; set; }
+
+	/// <summary>
+	/// Fill color. Any valid CSS color; defaults to the card accent.
+	/// </summary>
+	public string? Color { get; set; }
+}
+
+/// <summary>
+/// An action link in the detail section of an <see cref="OrgNodeData"/> card.
+/// </summary>
+public class OrgNodeAction
+{
+	/// <summary>
+	/// Link text.
+	/// </summary>
+	public string? Label { get; set; }
+
+	/// <summary>
+	/// Optional target. Omit to render inert text rather than a link.
+	/// </summary>
+	public string? Href { get; set; }
 }
 
 /// <summary>

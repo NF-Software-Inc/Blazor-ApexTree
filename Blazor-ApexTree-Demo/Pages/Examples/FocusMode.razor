@@ -1,0 +1,127 @@
+@page "/focus-mode"
+@using ApexTree
+@inherits ComponentBase
+
+<PageTitle>Focus Mode Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Focus Mode</h1>
+        <p class="subtitle is-6">
+            <code>Focus</code> dims everything outside a node's lineage and visible subtree, then
+            springs the camera to frame it. <code>ClickToFocus</code> lets the user do it by clicking,
+            and Escape clears it. Tune the dim with <code>DimOpacity</code> (apextree 2.0+).
+        </p>
+
+        <div class="buttons mb-4">
+            <button class="button is-link" @onclick="@(() => Spotlight("product"))">
+                <span class="material-icons icon mr-1">center_focus_strong</span>
+                <span>Focus Product</span>
+            </button>
+            <button class="button is-link is-outlined" @onclick="@(() => Spotlight("sales"))">
+                <span class="material-icons icon mr-1">center_focus_strong</span>
+                <span>Focus Sales</span>
+            </button>
+            <button class="button is-light" @onclick="Clear">
+                <span class="material-icons icon mr-1">clear</span>
+                <span>Clear focus</span>
+            </button>
+            <button class="button is-light" @onclick="ReadFocus">
+                <span class="material-icons icon mr-1">help_outline</span>
+                <span>Read current focus</span>
+            </button>
+        </div>
+
+        <div class="notification is-info is-light">
+            <p><strong>GetFocusedNodeId:</strong> @(Reported ?? "(not read yet)")</p>
+            <p>Clicking any node focuses it too, because <code>ClickToFocus</code> is on.</p>
+        </div>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree @ref="TreeRef" TItem="string" Parent="ParentNode" Options="Options" />
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private ApexTree<string>? TreeRef;
+    private DataNode<string>? ParentNode;
+    private string? Reported;
+
+    private readonly ApexTreeOptions Options = new()
+    {
+        Width = 100,
+        WidthUnits = LengthUnits.Percent,
+        Height = 60,
+        HeightUnits = LengthUnits.Viewport,
+        EnableExpandCollapse = true,
+        EnableToolbar = true,
+        Focus = new FocusOptions
+        {
+            ClickToFocus = true,
+            DimOpacity = 0.75
+        }
+    };
+
+    protected override void OnInitialized()
+    {
+        ParentNode = new DataNode<string>
+        {
+            Id = "company", Data = "Acme Corp",
+            Children =
+            [
+                new()
+                {
+                    Id = "product", Data = "Product",
+                    Children =
+                    [
+                        new() { Id = "design", Data = "Design" },
+                        new() { Id = "research", Data = "Research" },
+                        new() { Id = "testing", Data = "Testing" }
+                    ]
+                },
+                new()
+                {
+                    Id = "sales", Data = "Sales",
+                    Children =
+                    [
+                        new() { Id = "domestic", Data = "Domestic" },
+                        new() { Id = "international", Data = "International" }
+                    ]
+                },
+                new()
+                {
+                    Id = "support", Data = "Support",
+                    Children =
+                    [
+                        new() { Id = "tier1", Data = "Tier 1" },
+                        new() { Id = "tier2", Data = "Tier 2" }
+                    ]
+                }
+            ]
+        };
+    }
+
+    private async Task Spotlight(string id)
+    {
+        if (TreeRef != null)
+            await TreeRef.Focus(id);
+    }
+
+    private async Task Clear()
+    {
+        if (TreeRef != null)
+            await TreeRef.ClearFocus();
+
+        Reported = null;
+    }
+
+    private async Task ReadFocus()
+    {
+        if (TreeRef != null)
+            Reported = await TreeRef.GetFocusedNodeId() ?? "(nothing focused)";
+    }
+}

@@ -19,6 +19,14 @@ jobs:
       new_version: ${{ steps.version.outputs.new_version }}
       new_version_number: ${{ steps.version.outputs.new_version_number }}
 
+    env:
+      # Passed as an environment variable, never interpolated into a run block. `${{ }}` is
+      # substituted textually before bash parses, so a commit message containing a double quote
+      # breaks the script, and one containing $(...) or backticks would RUN in this job, which can
+      # dispatch the NuGet publish. Merge commit messages include the PR title, which any outside
+      # contributor controls. Set at job level because two steps below read it.
+      COMMIT_MSG: ${{ github.event.head_commit.message }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -28,7 +36,6 @@ jobs:
       - name: Check if release commit
         id: check
         run: |
-          COMMIT_MSG="${{ github.event.head_commit.message }}"
           if [[ "$COMMIT_MSG" == release:* ]]; then
             echo "should_release=true" >> $GITHUB_OUTPUT
           else
@@ -46,7 +53,6 @@ jobs:
         id: version
         run: |
           LATEST_TAG="${{ steps.get_latest_tag.outputs.latest_tag }}"
-          COMMIT_MSG="${{ github.event.head_commit.message }}"
 
           CURRENT_VERSION=${LATEST_TAG#v}
 

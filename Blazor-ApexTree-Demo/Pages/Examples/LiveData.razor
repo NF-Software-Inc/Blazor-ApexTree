@@ -1,0 +1,170 @@
+@page "/live-data"
+@using ApexTree
+@inherits ComponentBase
+
+<PageTitle>Live Data Updates Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Live Data Updates</h1>
+        <p class="subtitle is-6">
+            <code>UpdateData</code> diffs the tree against a new dataset and animates the difference:
+            surviving nodes spring to their new positions, new people grow in, and departures retract.
+            Collapse state survives the update. Compare with <code>RebuildChart</code>, which redraws
+            from scratch (apextree 2.0+).
+        </p>
+
+        <div class="buttons mb-4">
+            @for (var i = 0; i < Quarters.Count; i++)
+            {
+                var index = i;
+                <button class="button @(index == CurrentQuarter ? "is-link" : "is-link is-outlined")"
+                        @onclick="() => ShowQuarter(index)">
+                    <span>@Quarters[index].Label</span>
+                </button>
+            }
+            <button class="button is-warning is-outlined" @onclick="RebuildCurrent">
+                <span class="material-icons icon mr-1">refresh</span>
+                <span>Rebuild instead (no animation)</span>
+            </button>
+        </div>
+
+        <div class="notification is-info is-light">
+            <p><strong>@Quarters[CurrentQuarter].Label</strong>: @Quarters[CurrentQuarter].Note</p>
+            <p><strong>Headcount:</strong> @CountNodes(Quarters[CurrentQuarter].Root)</p>
+        </div>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree @ref="TreeRef" TItem="string" Parent="ParentNode" Options="Options" />
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private ApexTree<string>? TreeRef;
+    private DataNode<string>? ParentNode;
+    private int CurrentQuarter;
+
+    private readonly ApexTreeOptions Options = new()
+    {
+        Width = 100,
+        WidthUnits = LengthUnits.Percent,
+        Height = 60,
+        HeightUnits = LengthUnits.Viewport,
+        EnableExpandCollapse = true,
+        EnableToolbar = true,
+        NodeWidth = 140,
+        NodeHeight = 44
+    };
+
+    private record Quarter(string Label, string Note, DataNode<string> Root);
+
+    private List<Quarter> Quarters = [];
+
+    protected override void OnInitialized()
+    {
+        Quarters =
+        [
+            new("Q1", "The founding team.", BuildQ1()),
+            new("Q2", "Engineering doubles and a design hire lands.", BuildQ2()),
+            new("Q3", "Support splits out under Operations.", BuildQ3()),
+            new("Q4", "Reorg: Design moves under Product, and Research winds down.", BuildQ4()),
+        ];
+
+        ParentNode = Quarters[0].Root;
+    }
+
+    // Ids are stable across quarters on purpose: that is what lets the reconciler
+    // recognise a person who moved rather than treating them as a new hire.
+    private static DataNode<string> BuildQ1() => new()
+    {
+        Id = "ceo", Data = "Ada (CEO)",
+        Children =
+        [
+            new() { Id = "eng", Data = "Brij (Eng)" },
+            new() { Id = "ops", Data = "Cleo (Ops)" }
+        ]
+    };
+
+    private static DataNode<string> BuildQ2() => new()
+    {
+        Id = "ceo", Data = "Ada (CEO)",
+        Children =
+        [
+            new()
+            {
+                Id = "eng", Data = "Brij (Eng)",
+                Children = [ new() { Id = "eng-1", Data = "Dev" }, new() { Id = "eng-2", Data = "Esme" } ]
+            },
+            new() { Id = "ops", Data = "Cleo (Ops)" },
+            new() { Id = "design", Data = "Fay (Design)" }
+        ]
+    };
+
+    private static DataNode<string> BuildQ3() => new()
+    {
+        Id = "ceo", Data = "Ada (CEO)",
+        Children =
+        [
+            new()
+            {
+                Id = "eng", Data = "Brij (Eng)",
+                Children = [ new() { Id = "eng-1", Data = "Dev" }, new() { Id = "eng-2", Data = "Esme" } ]
+            },
+            new()
+            {
+                Id = "ops", Data = "Cleo (Ops)",
+                Children = [ new() { Id = "support", Data = "Gus (Support)" } ]
+            },
+            new() { Id = "design", Data = "Fay (Design)" },
+            new() { Id = "research", Data = "Hana (Research)" }
+        ]
+    };
+
+    private static DataNode<string> BuildQ4() => new()
+    {
+        Id = "ceo", Data = "Ada (CEO)",
+        Children =
+        [
+            new()
+            {
+                Id = "eng", Data = "Brij (Eng)",
+                Children = [ new() { Id = "eng-1", Data = "Dev" }, new() { Id = "eng-2", Data = "Esme" } ]
+            },
+            new()
+            {
+                Id = "ops", Data = "Cleo (Ops)",
+                Children = [ new() { Id = "support", Data = "Gus (Support)" } ]
+            },
+            // Fay keeps her id but now hangs off Product, so she travels there
+            // continuously rather than disappearing and reappearing.
+            new()
+            {
+                Id = "product", Data = "Iris (Product)",
+                Children = [ new() { Id = "design", Data = "Fay (Design)" } ]
+            }
+            // Hana (research) is absent, so that node retracts.
+        ]
+    };
+
+    private static int CountNodes(DataNode<string> node) =>
+        1 + (node.Children?.Sum(CountNodes) ?? 0);
+
+    private async Task ShowQuarter(int index)
+    {
+        CurrentQuarter = index;
+        ParentNode = Quarters[index].Root;
+
+        if (TreeRef != null)
+            await TreeRef.UpdateData(Quarters[index].Root);
+    }
+
+    private async Task RebuildCurrent()
+    {
+        if (TreeRef != null)
+            await TreeRef.RebuildChart();
+    }
+}

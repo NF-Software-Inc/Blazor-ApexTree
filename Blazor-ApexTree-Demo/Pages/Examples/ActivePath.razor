@@ -1,0 +1,134 @@
+@page "/active-path"
+@using ApexTree
+@inherits ComponentBase
+
+<PageTitle>Active Path Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Active Path</h1>
+        <p class="subtitle is-6">
+            <code>SetActivePath</code> flows a marching dash along the edges from the root to each
+            target node, so an escalation route or a reporting line reads at a glance. Style it with
+            <code>EdgeFlow</code>. Passing several ids unions their lineages (apextree 2.0+).
+        </p>
+
+        <div class="buttons mb-4">
+            <button class="button is-link" @onclick="@(() => Flow("tier3"))">
+                <span class="material-icons icon mr-1">route</span>
+                <span>Escalate to Tier 3</span>
+            </button>
+            <button class="button is-link is-outlined" @onclick="@(() => Flow("design"))">
+                <span class="material-icons icon mr-1">route</span>
+                <span>Path to Design</span>
+            </button>
+            <button class="button is-link is-outlined" @onclick="FlowBoth">
+                <span>Both at once (union)</span>
+            </button>
+            <button class="button is-light" @onclick="Clear">
+                <span class="material-icons icon mr-1">clear</span>
+                <span>Clear</span>
+            </button>
+            <button class="button is-light" @onclick="ReadPath">
+                <span class="material-icons icon mr-1">help_outline</span>
+                <span>Read active path</span>
+            </button>
+        </div>
+
+        <div class="notification is-info is-light">
+            <p><strong>GetActivePath:</strong> @(Reported.Length > 0 ? string.Join(", ", Reported) : "(empty)")</p>
+            <p>The dash is skipped, and the edges merely highlighted, when the visitor has asked for reduced motion.</p>
+        </div>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree @ref="TreeRef" TItem="string" Parent="ParentNode" Options="Options" />
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private ApexTree<string>? TreeRef;
+    private DataNode<string>? ParentNode;
+    private string[] Reported = [];
+
+    private readonly ApexTreeOptions Options = new()
+    {
+        Width = 100,
+        WidthUnits = LengthUnits.Percent,
+        Height = 62,
+        HeightUnits = LengthUnits.Viewport,
+        EnableExpandCollapse = true,
+        EnableToolbar = true,
+        EdgeFlow = new EdgeFlowOptions
+        {
+            Color = "#EF6C00",
+            Width = 3,
+            Speed = 70,
+            DashLength = 10,
+            GapLength = 6,
+            Direction = EdgeFlowDirection.ToChild
+        }
+    };
+
+    protected override void OnInitialized()
+    {
+        ParentNode = new DataNode<string>
+        {
+            Id = "company", Data = "Acme Corp",
+            Children =
+            [
+                new()
+                {
+                    Id = "product", Data = "Product",
+                    Children =
+                    [
+                        new() { Id = "design", Data = "Design" },
+                        new() { Id = "research", Data = "Research" }
+                    ]
+                },
+                new()
+                {
+                    Id = "support", Data = "Support",
+                    Children =
+                    [
+                        new() { Id = "tier1", Data = "Tier 1" },
+                        new()
+                        {
+                            Id = "tier2", Data = "Tier 2",
+                            Children = [ new() { Id = "tier3", Data = "Tier 3" } ]
+                        }
+                    ]
+                }
+            ]
+        };
+    }
+
+    private async Task Flow(string id)
+    {
+        if (TreeRef != null)
+            await TreeRef.SetActivePath([id]);
+    }
+
+    private async Task FlowBoth()
+    {
+        if (TreeRef != null)
+            await TreeRef.SetActivePath(["tier3", "design"]);
+    }
+
+    private async Task Clear()
+    {
+        if (TreeRef != null)
+            await TreeRef.ClearActivePath();
+
+        Reported = [];
+    }
+
+    private async Task ReadPath()
+    {
+        if (TreeRef != null)
+            Reported = await TreeRef.GetActivePath();
+    }
+}

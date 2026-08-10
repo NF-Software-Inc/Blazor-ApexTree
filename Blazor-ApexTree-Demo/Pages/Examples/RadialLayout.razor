@@ -1,0 +1,133 @@
+@page "/radial"
+@using ApexTree
+@inherits ComponentBase
+
+<PageTitle>Radial Layout Example</PageTitle>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-3">Radial Layout</h1>
+        <p class="subtitle is-6">
+            <code>Direction.Radial</code> puts the root at the centre with each depth on a ring.
+            <code>LayoutType.Cluster</code> pins every leaf to the outer ring for a dendrogram, and
+            <code>ExternalLabel.CollisionStrategy</code> culls labels that will not fit on crowded
+            inner rings (apextree 2.0+).
+        </p>
+
+        <div class="buttons mb-4">
+            <button class="button @(IsCluster ? "is-link is-outlined" : "is-link")" @onclick="() => SetLayout(false)">
+                <span>Tidy tree</span>
+            </button>
+            <button class="button @(IsCluster ? "is-link" : "is-link is-outlined")" @onclick="() => SetLayout(true)">
+                <span>Dendrogram (cluster)</span>
+            </button>
+            <button class="button is-light" @onclick="CycleCollision">
+                <span class="material-icons icon mr-1">label_off</span>
+                <span>Labels: @Collision</span>
+            </button>
+        </div>
+
+        <div class="box" style="padding: 0;">
+            @if (ParentNode != null)
+            {
+                <ApexTree @key="LayoutKey" TItem="string" Parent="ParentNode" Options="Options" />
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private DataNode<string>? ParentNode;
+    private bool IsCluster;
+    private ExternalLabelCollision Collision = ExternalLabelCollision.Hide;
+
+    // Layout type and label options are read when the chart is constructed, so changing them
+    // re-keys the component to force a fresh instance rather than reconciling in place.
+    private string LayoutKey => $"{IsCluster}-{Collision}";
+
+    private ApexTreeOptions Options = null!;
+
+    protected override void OnInitialized()
+    {
+        ParentNode = BuildTree();
+        Options = BuildOptions();
+    }
+
+    private ApexTreeOptions BuildOptions() => new()
+    {
+        Width = 100,
+        WidthUnits = LengthUnits.Percent,
+        Height = 75,
+        HeightUnits = LengthUnits.Viewport,
+        Direction = Direction.Radial,
+        LayoutType = IsCluster ? LayoutType.Cluster : LayoutType.Tree,
+        NodeWidth = 14,
+        NodeHeight = 14,
+        SiblingSpacing = 16,
+        ChildrenSpacing = 90,
+        EnableToolbar = true,
+        EnableZoomPan = true,
+        ExternalLabel = new ExternalLabelOptions
+        {
+            Enabled = true,
+            CollisionStrategy = Collision
+        }
+    };
+
+    private void SetLayout(bool cluster)
+    {
+        IsCluster = cluster;
+        Options = BuildOptions();
+    }
+
+    private void CycleCollision()
+    {
+        Collision = Collision switch
+        {
+            ExternalLabelCollision.None => ExternalLabelCollision.Hide,
+            ExternalLabelCollision.Hide => ExternalLabelCollision.Leaves,
+            _ => ExternalLabelCollision.None
+        };
+
+        Options = BuildOptions();
+    }
+
+    // A deliberately crowded hierarchy: radial rings are where label collision and
+    // ring auto-spacing actually get tested.
+    private static DataNode<string> BuildTree()
+    {
+        var groups = new (string Name, string[] Teams)[]
+        {
+            ("Platform", ["Runtime", "Storage", "Networking", "Identity"]),
+            ("Product", ["Web", "Mobile", "Desktop", "Embedded"]),
+            ("Data", ["Ingest", "Warehouse", "Modelling", "Reporting"]),
+            ("Revenue", ["Sales", "Partnerships", "Renewals"]),
+            ("People", ["Hiring", "Learning"])
+        };
+
+        var root = new DataNode<string> { Id = "org", Data = "Org", Children = [] };
+
+        foreach (var (name, teams) in groups)
+        {
+            var group = new DataNode<string>
+            {
+                Id = name.ToLowerInvariant(),
+                Data = name,
+                Children = []
+            };
+
+            foreach (var team in teams)
+            {
+                group.Children!.Add(new DataNode<string>
+                {
+                    Id = $"{name.ToLowerInvariant()}-{team.ToLowerInvariant()}",
+                    Data = team
+                });
+            }
+
+            root.Children!.Add(group);
+        }
+
+        return root;
+    }
+}

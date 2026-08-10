@@ -10,9 +10,9 @@
 		<Authors>ApexCharts</Authors>
 		<Company>ApexCharts</Company>
 		<Copyright>Copyright 2026 $(Company)</Copyright>
-		<Version>10.5.0</Version>
-		<AssemblyVersion>10.5.0.0</AssemblyVersion>
-		<FileVersion>10.5.0.0</FileVersion>
+		<Version>11.0.0</Version>
+		<AssemblyVersion>11.0.0.0</AssemblyVersion>
+		<FileVersion>11.0.0.0</FileVersion>
 		<PackageId>Blazor-ApexTree</PackageId>
 		<PackageTags>Blazor Charts ApexTree Server WebAssembly</PackageTags>
 		<RepositoryUrl>https://github.com/apexcharts/Blazor-ApexTree</RepositoryUrl>
@@ -21,6 +21,8 @@
 			A Blazor wrapper for ApexTree.js.
 		</Description>
 		<PackageReleaseNotes>
+			11.0.0 Update ApexTree core to 2.0.0. Motion is now on by default (collapse, expand and data changes animate and are interruptible), the expand/collapse button is redesigned with the hidden-descendant count moved inside it, and collapsing caps how far the camera zooms in: set EnableAnimation false, ExpandCollapseButtonSize 14 with ExpandCollapseButtonBorderColor #BCBCBC, and MaxZoomNodeSpan 0 to restore the old look. Adds UpdateData (animated reconcile instead of a redraw), ExpandAll/CollapseAll/ExpandToDepth/ExpandSubtree/CollapseSubtree, Focus/ClearFocus/GetFocusedNodeId, SetActivePath/ClearActivePath/GetActivePath, ExpandCard/CollapseCard/ToggleCard/SetExpandedCards/GetExpandedCards, CenterOnNode, Direction.Radial and LayoutType (dendrogram), Motion, Focus, SemanticZoom, AutoNodeHeight, CardExpansion and EdgeFlow options, the CountBadge options, ExpandCollapseButtonSize/IconColor/HaloColor, ExternalLabel.CollisionStrategy, OrgNodeData Tags/Stats/Progress/Actions/Details, and DataNode.HasChildren. Fixes RebuildChart and Construct, which passed serialized JSON where the core expects an object and so threw instead of redrawing
+
 			10.5.0 Update ApexTree core to 1.14.0. Add Theme, EnableSearch, EnableBreadcrumb, EnableExpandCollapseZoom, EnableZoomPan, EnableSelection (+ OnSelectionChange event), Locale (RTL/messages), PaddingX/Y, EdgeStyle, EdgeColorMode, node-level CardImagePosition, ExternalLabel, ExpandCollapseOnNodeClick, NodeShadow/Hover, the OrgNodeData org-card model, and the ResetPanZoomBaseAsync method
 
 			10.2.0 Update ApexTree core to 1.9.0, add EnableAnimation, ViewPortWidth, ViewPortHeight, collapse badge options, expand/collapse button styling, A11yOptions, Zoom/ExportToSvg/Construct graph API methods, AdditionalOptions for forward-compatibility

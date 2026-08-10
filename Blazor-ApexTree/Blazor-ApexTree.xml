@@ -113,10 +113,136 @@
             </summary>
             <param name="data">The new root node to render.</param>
         </member>
+        <member name="M:ApexTree.ApexTree`1.UpdateData(ApexTree.DataNode{`0})">
+            <summary>
+            Diffs the tree against a new dataset and animates the difference instead of rebuilding:
+            surviving nodes spring to their new positions, new ids grow in, and departed ones retract.
+            Collapse state, selection, focus and expanded cards all survive.
+            </summary>
+            <remarks>
+            Prefer this over <see cref="M:ApexTree.ApexTree`1.Construct(ApexTree.DataNode{`0})"/> and <see cref="M:ApexTree.ApexTree`1.RebuildChart"/> for
+            data changes: both of those redraw from scratch. Requires ApexTree core 2.0.0 or later.
+            </remarks>
+            <param name="data">The new root node to reconcile to.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.ExpandAll">
+            <summary>
+            Expands every node in the tree. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.CollapseAll">
+            <summary>
+            Collapses every node in the tree. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.ExpandToDepth(System.Int32)">
+            <summary>
+            Expands the tree down to the given depth and collapses everything deeper.
+            Requires ApexTree core 2.0.0 or later.
+            </summary>
+            <param name="depth">The depth to expand to, with the root at 0.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.ExpandSubtree(System.String)">
+            <summary>
+            Expands a node and everything beneath it. Requires ApexTree core 2.0.0 or later.
+            </summary>
+            <param name="id">The HTML id of the node to expand.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.CollapseSubtree(System.String)">
+            <summary>
+            Collapses a node and everything beneath it. Requires ApexTree core 2.0.0 or later.
+            </summary>
+            <param name="id">The HTML id of the node to collapse.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.Focus(System.String)">
+            <summary>
+            Spotlights a node: dims everything outside its lineage and visible subtree, and springs the
+            camera to frame it. Requires ApexTree core 2.0.0 or later.
+            </summary>
+            <remarks>
+            See <see cref="T:ApexTree.FocusOptions"/> to let the user do this by clicking, and to tune the dim.
+            </remarks>
+            <param name="id">The HTML id of the node to spotlight.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.ClearFocus">
+            <summary>
+            Clears the spotlight and restores the full view. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.GetFocusedNodeId">
+            <summary>
+            Gets the spotlighted node id, or <see langword="null"/> when nothing is focused.
+            Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.SetActivePath(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Flows an animated dash along the edges from the root to each of the given nodes.
+            Requires ApexTree core 2.0.0 or later.
+            </summary>
+            <remarks>
+            See <see cref="T:ApexTree.EdgeFlowOptions"/> for colour, speed and dash styling.
+            </remarks>
+            <param name="ids">The HTML ids of the target nodes.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.ClearActivePath">
+            <summary>
+            Clears the active path. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.GetActivePath">
+            <summary>
+            Gets the node ids currently on the active path. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.ExpandCard(System.String)">
+            <summary>
+            Expands a node's card in place to reveal its detail section. This is separate from expanding
+            the node's children. Requires ApexTree core 2.0.0 or later.
+            </summary>
+            <remarks>
+            Enable <see cref="P:ApexTree.ApexTreeOptions.AutoNodeHeight"/> so the card can grow to fit the detail.
+            </remarks>
+            <param name="id">The HTML id of the node whose card to expand.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.CollapseCard(System.String)">
+            <summary>
+            Collapses a node's card back to its summary. Requires ApexTree core 2.0.0 or later.
+            </summary>
+            <param name="id">The HTML id of the node whose card to collapse.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.ToggleCard(System.String)">
+            <summary>
+            Toggles a node's card between summary and detail. Requires ApexTree core 2.0.0 or later.
+            </summary>
+            <param name="id">The HTML id of the node whose card to toggle.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.SetExpandedCards(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Replaces the set of expanded cards in one pass. Requires ApexTree core 2.0.0 or later.
+            </summary>
+            <param name="ids">The HTML ids of the nodes whose cards should be expanded.</param>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.GetExpandedCards">
+            <summary>
+            Gets the ids of the nodes whose cards are expanded. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="M:ApexTree.ApexTree`1.CenterOnNode(System.String)">
+            <summary>
+            Centres the camera on a node, keeping the current zoom level.
+            Requires ApexTree core 2.0.0 or later.
+            </summary>
+            <param name="id">The HTML id of the node to centre on.</param>
+        </member>
         <member name="M:ApexTree.ApexTree`1.RebuildChart">
             <summary>
             Destroys the chart and recreates it. Useful when the dataset or options have changed.
             </summary>
+            <remarks>
+            For a data-only change prefer <see cref="M:ApexTree.ApexTree`1.UpdateData(ApexTree.DataNode{`0})"/>, which animates the
+            difference instead of redrawing from scratch.
+            </remarks>
         </member>
         <member name="M:ApexTree.ApexTree`1.GetWidth">
             <summary>
@@ -175,6 +301,59 @@
             Avatar is centered above the text.
             </summary>
         </member>
+        <member name="T:ApexTree.CountBadgeSource">
+            <summary>
+            What the always-on count badge counts. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="F:ApexTree.CountBadgeSource.Descendants">
+            <summary>
+            Every descendant beneath the node, at any depth (the default).
+            </summary>
+        </member>
+        <member name="F:ApexTree.CountBadgeSource.Children">
+            <summary>
+            Direct children only.
+            </summary>
+        </member>
+        <member name="F:ApexTree.CountBadgeSource.Data">
+            <summary>
+            A number read from the node's own data, keyed by
+            <see cref="P:ApexTree.ApexTreeOptions.CountBadgeDataKey"/>.
+            </summary>
+        </member>
+        <member name="T:ApexTree.Direction">
+            <summary>
+            The direction the tree grows from the root.
+            </summary>
+        </member>
+        <member name="F:ApexTree.Direction.Top">
+            <summary>
+            Root at the top with children below it (the default).
+            </summary>
+        </member>
+        <member name="F:ApexTree.Direction.Bottom">
+            <summary>
+            Root at the bottom with children above it.
+            </summary>
+        </member>
+        <member name="F:ApexTree.Direction.Left">
+            <summary>
+            Root on the left with children to its right.
+            </summary>
+        </member>
+        <member name="F:ApexTree.Direction.Right">
+            <summary>
+            Root on the right with children to its left.
+            </summary>
+        </member>
+        <member name="F:ApexTree.Direction.Radial">
+            <summary>
+            Root at the centre with each depth on a ring radiating outward. Combine with
+            <see cref="F:ApexTree.LayoutType.Cluster"/> for a dendrogram that pins every leaf to the
+            outer ring. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
         <member name="T:ApexTree.EdgeColorMode">
             <summary>
             Controls how edge (connector) colors are determined.
@@ -188,6 +367,21 @@
         <member name="F:ApexTree.EdgeColorMode.Node">
             <summary>
             Each edge inherits the border color of the child node it connects into.
+            </summary>
+        </member>
+        <member name="T:ApexTree.EdgeFlowDirection">
+            <summary>
+            Which way the dashes travel along an active-path edge. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="F:ApexTree.EdgeFlowDirection.ToChild">
+            <summary>
+            Root toward leaf (the default).
+            </summary>
+        </member>
+        <member name="F:ApexTree.EdgeFlowDirection.ToParent">
+            <summary>
+            Leaf toward root.
             </summary>
         </member>
         <member name="T:ApexTree.EdgeStyle">
@@ -230,6 +424,27 @@
             Label sits to the right of the node (text is left-anchored).
             </summary>
         </member>
+        <member name="T:ApexTree.ExternalLabelCollision">
+            <summary>
+            How colliding external labels are resolved. Chiefly for crowded radial rings.
+            Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="F:ApexTree.ExternalLabelCollision.None">
+            <summary>
+            Draw every label, overlapping if necessary (the default).
+            </summary>
+        </member>
+        <member name="F:ApexTree.ExternalLabelCollision.Hide">
+            <summary>
+            Cull labels that would collide, keeping as many as fit per ring.
+            </summary>
+        </member>
+        <member name="F:ApexTree.ExternalLabelCollision.Leaves">
+            <summary>
+            Only ever label leaf nodes, then cull collisions among them.
+            </summary>
+        </member>
         <member name="T:ApexTree.ExternalLabelVerticalAlign">
             <summary>
             Vertical placement of an external node label relative to the node.
@@ -248,6 +463,22 @@
         <member name="F:ApexTree.ExternalLabelVerticalAlign.Top">
             <summary>
             Label sits above the node (text is bottom-anchored).
+            </summary>
+        </member>
+        <member name="T:ApexTree.LayoutType">
+            <summary>
+            How the layout places leaf nodes. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="F:ApexTree.LayoutType.Tree">
+            <summary>
+            Tidy tree: each node sits one rank below its parent (the default).
+            </summary>
+        </member>
+        <member name="F:ApexTree.LayoutType.Cluster">
+            <summary>
+            Dendrogram: every leaf is pinned to the outermost rank, so all leaves line up.
+            Most striking combined with <see cref="F:ApexTree.Direction.Radial"/>.
             </summary>
         </member>
         <member name="T:ApexTree.LengthUnits">
@@ -313,6 +544,42 @@
         <member name="F:ApexTree.LengthUnits.Inches">
             <summary>
             Measure in inches.
+            </summary>
+        </member>
+        <member name="T:ApexTree.MotionSpring">
+            <summary>
+            Spring tuning for collapse/expand and camera motion. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="F:ApexTree.MotionSpring.Crisp">
+            <summary>
+            Tight and quick, with minimal overshoot (the default).
+            </summary>
+        </member>
+        <member name="F:ApexTree.MotionSpring.Gentle">
+            <summary>
+            Softer and slower, with a longer settle.
+            </summary>
+        </member>
+        <member name="F:ApexTree.MotionSpring.Snappy">
+            <summary>
+            Fastest, with a touch more overshoot.
+            </summary>
+        </member>
+        <member name="T:ApexTree.MotionStagger">
+            <summary>
+            How an expand is sequenced across the nodes it reveals. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="F:ApexTree.MotionStagger.Wave">
+            <summary>
+            Radiate outward by graph distance from the toggled node, so a subtree unfolds as a wave
+            (the default).
+            </summary>
+        </member>
+        <member name="F:ApexTree.MotionStagger.None">
+            <summary>
+            Move every node at once.
             </summary>
         </member>
         <member name="T:ApexTree.Theme">
@@ -702,7 +969,38 @@
             Border color of the expand/collapse button.
             </summary>
             <remarks>
-            Prefix with '#'. Default: '#BCBCBC'.
+            Prefix with '#'. Default: '#E4E7EC'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.ExpandCollapseButtonIconColor">
+            <summary>
+            Color of the '+'/'-' glyph inside the expand/collapse button.
+            </summary>
+            <remarks>
+            Prefix with '#'. Default: '#475467'. Set this alongside
+            <see cref="P:ApexTree.ApexTreeOptions.ExpandCollapseButtonBGColor"/> when theming, or the glyph can end up invisible
+            against the button fill. Requires ApexTree core 2.0.0 or later.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.ExpandCollapseButtonHaloColor">
+            <summary>
+            Color of an opaque ring drawn behind the expand/collapse button, so it punches through the
+            node border and the incoming edge instead of dissolving into them.
+            </summary>
+            <remarks>
+            Prefix with '#'. Off by default, because the library cannot know what the canvas behind the
+            chart is painted with: set it to that background color. Requires ApexTree core 2.0.0 or later.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.ExpandCollapseButtonSize">
+            <summary>
+            Diameter of the expand/collapse button in pixels. Default: 15.
+            </summary>
+            <remarks>
+            The button also carries an invisible hit area, so the effective tap target stays at least
+            24px (the WCAG 2.2 SC 2.5.8 minimum) however small the button is drawn. Lower this for
+            marker-style nodes small enough that the button would dominate them. Requires ApexTree core
+            2.0.0 or later.
             </remarks>
         </member>
         <member name="P:ApexTree.ApexTreeOptions.Theme">
@@ -770,6 +1068,178 @@
             Controls ARIA role/label semantics and keyboard navigation.
             </summary>
         </member>
+        <member name="P:ApexTree.ApexTreeOptions.LayoutType">
+            <summary>
+            How the layout places leaf nodes. Default: <see cref="F:ApexTree.LayoutType.Tree"/>. Set to
+            <see cref="F:ApexTree.LayoutType.Cluster"/> with <see cref="F:ApexTree.Direction.Radial"/> for a
+            dendrogram. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.MaxZoomNodeSpan">
+            <summary>
+            Caps how far the camera zooms in when it re-fits after a collapse or expand, so a view of a
+            few remaining nodes does not balloon. Default: 8.
+            </summary>
+            <remarks>
+            Measured in node widths and heights: the fit always spans at least this many, centred on the
+            visible nodes. Larger means less zoom-in; 0 disables the cap and fits tightly. The cap never
+            shrinks the chart below 1:1, so a chart narrower than this many node widths keeps its tight
+            fit rather than scaling down on every collapse. Only applies while
+            <see cref="P:ApexTree.ApexTreeOptions.EnableExpandCollapseZoom"/> is <see langword="true"/>. Requires ApexTree core
+            2.0.0 or later.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EnableCommandPalette">
+            <summary>
+            Show a command palette overlay on Ctrl/Cmd + K for jumping to a node, expanding or
+            collapsing everything, and fitting the view. Default: <see langword="false"/>.
+            Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.Motion">
+            <summary>
+            Tuning for the spring motion behind collapse/expand, data updates and camera moves.
+            Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.Focus">
+            <summary>
+            Focus ("spotlight") mode options. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.SemanticZoom">
+            <summary>
+            Semantic zoom (level of detail) options. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.AutoNodeHeight">
+            <summary>
+            Per-node measured height options. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CardExpansion">
+            <summary>
+            Expandable-card options. Pair with <see cref="P:ApexTree.ApexTreeOptions.AutoNodeHeight"/> so an expanded card can
+            actually grow. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.EdgeFlow">
+            <summary>
+            Styling for the animated active path set by
+            <see cref="M:ApexTree.ApexTree`1.SetActivePath(System.Collections.Generic.IEnumerable{System.String})"/>.
+            Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CountBadgeEnabled">
+            <summary>
+            Show a persistent count badge on every node, independent of collapse state. Default:
+            <see langword="false"/>. Requires ApexTree core 2.0.0 or later.
+            </summary>
+            <remarks>
+            This is distinct from <see cref="P:ApexTree.ApexTreeOptions.CollapseBadgeEnabled"/>, which only counts what a collapse
+            is currently hiding.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CountBadgeSource">
+            <summary>
+            What the count badge counts. Default:
+            <see cref="F:ApexTree.CountBadgeSource.Descendants"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CountBadgeDataKey">
+            <summary>
+            When <see cref="P:ApexTree.ApexTreeOptions.CountBadgeSource"/> is <see cref="F:ApexTree.CountBadgeSource.Data"/>, the key
+            to read the number from on each node's data object. Default: 'count'.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CountBadgeThreshold">
+            <summary>
+            Minimum count required before the count badge appears. Default: 1.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CountBadgeBGColor">
+            <summary>
+            Background color of the count badge.
+            </summary>
+            <remarks>
+            Prefix with '#'. Default: '#EEF2FF'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CountBadgeFontColor">
+            <summary>
+            Font color of the count badge.
+            </summary>
+            <remarks>
+            Prefix with '#'. Default: '#3730A3'.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CountBadgeFontSize">
+            <summary>
+            Font size of the count badge in pixels. Default: 12.
+            </summary>
+        </member>
+        <member name="P:ApexTree.ApexTreeOptions.CountBadgeFontSizeUnits">
+            <summary>
+            The measurement type to use for the <see cref="P:ApexTree.ApexTreeOptions.CountBadgeFontSize"/>.
+            </summary>
+        </member>
+        <member name="T:ApexTree.AutoNodeHeightOptions">
+            <summary>
+            Measure each node's content and give it its own height, instead of every node sharing the
+            global <see cref="P:ApexTree.DataNodeOptions.NodeHeight"/>.
+            </summary>
+            <remarks>
+            Requires ApexTree core 2.0.0 or later. Cartesian directions only: grouped-leaf stacks and
+            <see cref="F:ApexTree.Direction.Radial"/> keep a uniform height. Measurement needs a browser, so it is
+            skipped during prerendering and the global height is used until the component renders client
+            side. This is also what lets an expanded card grow, so enable it when using
+            <see cref="P:ApexTree.ApexTreeOptions.CardExpansion"/>.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.AutoNodeHeightOptions.Enabled">
+            <summary>
+            Enable per-node measurement. Default: <see langword="false"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.AutoNodeHeightOptions.MinHeight">
+            <summary>
+            Floor for a measured height, in pixels. Nodes never measure shorter than this.
+            </summary>
+        </member>
+        <member name="P:ApexTree.AutoNodeHeightOptions.MaxHeight">
+            <summary>
+            Ceiling for a measured height, in pixels. Content taller than this clips rather than growing
+            the node.
+            </summary>
+        </member>
+        <member name="P:ApexTree.AutoNodeHeightOptions.ExtraHeight">
+            <summary>
+            Extra pixels added to every measured height, for breathing room the template does not
+            account for itself.
+            </summary>
+        </member>
+        <member name="T:ApexTree.CardExpansionOptions">
+             <summary>
+             Expandable cards: a node's card can expand in place to reveal a detail section. This is separate
+             from expanding a node's children.
+             </summary>
+             <remarks>
+             Requires ApexTree core 2.0.0 or later. The built-in org card grows a chevron whenever its
+             <see cref="T:ApexTree.OrgNodeData"/> carries any detail field (<see cref="P:ApexTree.OrgNodeData.Stats"/>,
+             <see cref="P:ApexTree.OrgNodeData.Progress"/>, <see cref="P:ApexTree.OrgNodeData.Actions"/> or
+             <see cref="P:ApexTree.OrgNodeData.Details"/>). Drive it from C# with
+             <see cref="M:ApexTree.ApexTree`1.ToggleCard(System.String)"/> and friends.
+            
+             Pair this with <see cref="P:ApexTree.ApexTreeOptions.AutoNodeHeight"/>: without measured heights the card
+             still toggles but the revealed detail may clip, since the node's box cannot grow.
+             </remarks>
+        </member>
+        <member name="P:ApexTree.CardExpansionOptions.ClickToExpand">
+            <summary>
+            Toggle a card when its body is clicked, not just its chevron. Default:
+            <see langword="false"/>. The chevron and the C# methods work either way.
+            </summary>
+        </member>
         <member name="T:ApexTree.ImageDataNode">
             <summary>
             Implementation of data node for name-URL pairs.
@@ -804,6 +1274,19 @@
             <summary>
             Items to display below this node.
             </summary>
+        </member>
+        <member name="P:ApexTree.DataNode`1.HasChildren">
+            <summary>
+            Marks this node as having children that are not loaded yet, so it renders an expand button
+            even though <see cref="P:ApexTree.DataNode`1.Children"/> is empty. Requires ApexTree core 2.0.0 or later.
+            </summary>
+            <remarks>
+            The core's lazy-loading callback is a JavaScript function and is not exposed through this
+            wrapper. Use this flag with the <c>OnNodeExpanded</c> event instead: mark the node, fetch the
+            children in C# when it is expanded, then call
+            <see cref="M:ApexTree.ApexTree`1.UpdateData(ApexTree.DataNode{`0})"/> with the filled-in tree. Because
+            that reconciles rather than rebuilds, the subtree springs into place.
+            </remarks>
         </member>
         <member name="M:ApexTree.DataNode`1.AddChild(`0)">
             <summary>
@@ -1039,6 +1522,55 @@
             and <see cref="P:ApexTree.ApexTreeOptions.TooltipTemplate"/> properties for function-valued options.
             </remarks>
         </member>
+        <member name="T:ApexTree.EdgeFlowOptions">
+            <summary>
+            Styling for the animated "active path": a marching dash that flows along the edges from the root
+            to one or more nodes.
+            </summary>
+            <remarks>
+            Requires ApexTree core 2.0.0 or later. Set the path with
+            <see cref="M:ApexTree.ApexTree`1.SetActivePath(System.Collections.Generic.IEnumerable{System.String})"/> and clear it with
+            <see cref="M:ApexTree.ApexTree`1.ClearActivePath"/>. The animation is skipped (edges are highlighted
+            but static) when the user has asked for reduced motion.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.EdgeFlowOptions.Color">
+            <summary>
+            Stroke color of the flowing edges. Default: a soft indigo (<c>#5C6BC0</c>).
+            </summary>
+        </member>
+        <member name="P:ApexTree.EdgeFlowOptions.Width">
+            <summary>
+            Stroke width of the flowing edges, in pixels. Default: <c>2</c>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.EdgeFlowOptions.Speed">
+            <summary>
+            Dash travel speed in pixels per second. Default: <c>60</c>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.EdgeFlowOptions.DashLength">
+            <summary>
+            Length of each dash, in pixels. Default: <c>8</c>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.EdgeFlowOptions.GapLength">
+            <summary>
+            Gap between dashes, in pixels. Default: <c>6</c>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.EdgeFlowOptions.Direction">
+            <summary>
+            Which way the dashes travel. Default: <see cref="F:ApexTree.EdgeFlowDirection.ToChild"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.EdgeFlowOptions.FollowFocus">
+            <summary>
+            Automatically flow the path to whichever node is focused, so
+            <see cref="M:ApexTree.ApexTree`1.Focus(System.String)"/> also lights its lineage. Default:
+            <see langword="false"/>.
+            </summary>
+        </member>
         <member name="T:ApexTree.ExternalLabelOptions">
             <summary>
             Options for rendering a node's label outside the node bounds, instead of via the in-node template.
@@ -1096,6 +1628,41 @@
             (top-to-bottom) and -90 for bottom-to-top text (default: 0).
             </summary>
         </member>
+        <member name="P:ApexTree.ExternalLabelOptions.CollisionStrategy">
+            <summary>
+            How colliding labels are resolved. Default: <see cref="F:ApexTree.ExternalLabelCollision.None"/>, which
+            draws every label even where they overlap.
+            </summary>
+            <remarks>
+            Chiefly for <see cref="F:ApexTree.Direction.Radial"/>, where inner rings crowd quickly:
+            <see cref="F:ApexTree.ExternalLabelCollision.Hide"/> culls what will not fit on each ring, and
+            <see cref="F:ApexTree.ExternalLabelCollision.Leaves"/> labels only leaf nodes. Requires ApexTree core
+            2.0.0 or later.
+            </remarks>
+        </member>
+        <member name="T:ApexTree.FocusOptions">
+            <summary>
+            Focus ("spotlight") mode: dim everything outside a node's lineage and visible subtree, and
+            frame that subtree.
+            </summary>
+            <remarks>
+            Requires ApexTree core 2.0.0 or later. Drive it from C# with
+            <see cref="M:ApexTree.ApexTree`1.Focus(System.String)"/> and <see cref="M:ApexTree.ApexTree`1.ClearFocus"/>, or let
+            the user click by setting <see cref="P:ApexTree.FocusOptions.ClickToFocus"/>. Escape also clears it.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.FocusOptions.ClickToFocus">
+            <summary>
+            Spotlight a node when it is clicked. Default: <see langword="false"/>, so focus is
+            programmatic only.
+            </summary>
+        </member>
+        <member name="P:ApexTree.FocusOptions.DimOpacity">
+            <summary>
+            How strongly to dim everything outside the focused lineage, from 0 (invisible) to 1 (no
+            dimming). Default: <c>0.7</c>.
+            </summary>
+        </member>
         <member name="T:ApexTree.Image">
             <summary>
             Defines properties required for loading images in the chart.
@@ -1132,6 +1699,28 @@
             <summary>
             Overrides for user-facing strings, keyed by message name (e.g. "searchPlaceholder",
             "rootAriaLabel"). Unset keys keep their English defaults.
+            </summary>
+        </member>
+        <member name="T:ApexTree.MotionOptions">
+            <summary>
+            Tuning for the spring motion that drives collapse/expand, data updates and camera moves.
+            </summary>
+            <remarks>
+            Requires ApexTree core 2.0.0 or later. Motion is on by default; set
+            <see cref="P:ApexTree.ApexTreeOptions.EnableAnimation"/> to <see langword="false"/> to turn it off entirely,
+            or add the <c>apextree-reduced-motion</c> class to the container to honour a reduced-motion
+            preference.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.MotionOptions.Spring">
+            <summary>
+            Stiffness and damping preset. Default: <see cref="F:ApexTree.MotionSpring.Crisp"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.MotionOptions.Stagger">
+            <summary>
+            How an expand is sequenced across the nodes it reveals. Default:
+            <see cref="F:ApexTree.MotionStagger.Wave"/>.
             </summary>
         </member>
         <member name="T:ApexTree.NodeClickEventArgs">
@@ -1254,6 +1843,87 @@
             Extra metadata rows rendered under the title/subtitle as icon + label lines.
             </summary>
         </member>
+        <member name="P:ApexTree.OrgNodeData.Tags">
+            <summary>
+            Chip row shown in the card summary, always visible. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeData.Stats">
+            <summary>
+            Key/value rows revealed only when the card is expanded. Requires ApexTree core 2.0.0 or later.
+            </summary>
+            <remarks>
+            Supplying any of <see cref="P:ApexTree.OrgNodeData.Stats"/>, <see cref="P:ApexTree.OrgNodeData.Progress"/>, <see cref="P:ApexTree.OrgNodeData.Actions"/> or
+            <see cref="P:ApexTree.OrgNodeData.Details"/> is what makes the built-in card grow an expand chevron. See
+            <see cref="T:ApexTree.CardExpansionOptions"/>, and enable <see cref="P:ApexTree.ApexTreeOptions.AutoNodeHeight"/>
+            so the card can grow to fit them.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.OrgNodeData.Progress">
+            <summary>
+            A meter bar revealed when the card is expanded. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeData.Actions">
+            <summary>
+            Action links revealed when the card is expanded. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeData.Details">
+            <summary>
+            Free-form extra text revealed when the card is expanded. Requires ApexTree core 2.0.0 or later.
+            </summary>
+        </member>
+        <member name="T:ApexTree.OrgNodeStat">
+            <summary>
+            A key/value row in the detail section of an <see cref="T:ApexTree.OrgNodeData"/> card.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeStat.Label">
+            <summary>
+            Row label, shown on the left.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeStat.Value">
+            <summary>
+            Row value, shown on the right.
+            </summary>
+        </member>
+        <member name="T:ApexTree.OrgNodeProgress">
+            <summary>
+            A meter bar in the detail section of an <see cref="T:ApexTree.OrgNodeData"/> card.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeProgress.Value">
+            <summary>
+            Fill amount, from 0 to 100.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeProgress.Label">
+            <summary>
+            Optional caption shown alongside the bar.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeProgress.Color">
+            <summary>
+            Fill color. Any valid CSS color; defaults to the card accent.
+            </summary>
+        </member>
+        <member name="T:ApexTree.OrgNodeAction">
+            <summary>
+            An action link in the detail section of an <see cref="T:ApexTree.OrgNodeData"/> card.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeAction.Label">
+            <summary>
+            Link text.
+            </summary>
+        </member>
+        <member name="P:ApexTree.OrgNodeAction.Href">
+            <summary>
+            Optional target. Omit to render inert text rather than a link.
+            </summary>
+        </member>
         <member name="T:ApexTree.OrgNodeBadge">
             <summary>
             Status chip for an <see cref="T:ApexTree.OrgNodeData"/> card.
@@ -1282,6 +1952,35 @@
         <member name="P:ApexTree.OrgNodeMeta.Label">
             <summary>
             Row label text.
+            </summary>
+        </member>
+        <member name="T:ApexTree.SemanticZoomOptions">
+            <summary>
+            Semantic zoom (level of detail): swap what each node renders based on how large it appears on
+            screen, so a zoomed-out tree stays readable instead of turning into unreadable full cards.
+            </summary>
+            <remarks>
+            Requires ApexTree core 2.0.0 or later. Node geometry is fixed across tiers: the layout is
+            computed once and crossing a threshold only changes what is drawn inside each node's box, so
+            nothing moves and the camera is untouched. Thresholds are measured in on-screen pixels of node
+            width, not zoom percentages, so they behave the same at any container size.
+            </remarks>
+        </member>
+        <member name="P:ApexTree.SemanticZoomOptions.Enabled">
+            <summary>
+            Enable level-of-detail switching. Default: <see langword="false"/>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.SemanticZoomOptions.CompactBelow">
+            <summary>
+            Below this apparent node width in pixels, nodes drop from the full card to a compact
+            name-and-role plate. Default: <c>90</c>.
+            </summary>
+        </member>
+        <member name="P:ApexTree.SemanticZoomOptions.DotBelow">
+            <summary>
+            Below this apparent node width in pixels, nodes drop again to a colored slab carrying just
+            the name. Default: <c>42</c>.
             </summary>
         </member>
         <member name="T:ApexTree.GeneralExtensions">

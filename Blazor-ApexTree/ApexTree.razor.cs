@@ -220,8 +220,188 @@ public partial class ApexTree<TItem> : ComponentBase, IAsyncDisposable
     }
 
     /// <summary>
+    /// Diffs the tree against a new dataset and animates the difference instead of rebuilding:
+    /// surviving nodes spring to their new positions, new ids grow in, and departed ones retract.
+    /// Collapse state, selection, focus and expanded cards all survive.
+    /// </summary>
+    /// <remarks>
+    /// Prefer this over <see cref="Construct(DataNode{TItem})"/> and <see cref="RebuildChart"/> for
+    /// data changes: both of those redraw from scratch. Requires ApexTree core 2.0.0 or later.
+    /// </remarks>
+    /// <param name="data">The new root node to reconcile to.</param>
+    public async Task UpdateData(DataNode<TItem> data)
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.UpdateData", Id, JsonSerializer.Serialize(data, ChartSerializer.DefaultOptions));
+    }
+
+    /// <summary>
+    /// Expands every node in the tree. Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    public async Task ExpandAll()
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.ExpandAll", Id);
+    }
+
+    /// <summary>
+    /// Collapses every node in the tree. Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    public async Task CollapseAll()
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.CollapseAll", Id);
+    }
+
+    /// <summary>
+    /// Expands the tree down to the given depth and collapses everything deeper.
+    /// Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    /// <param name="depth">The depth to expand to, with the root at 0.</param>
+    public async Task ExpandToDepth(int depth)
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.ExpandToDepth", Id, depth);
+    }
+
+    /// <summary>
+    /// Expands a node and everything beneath it. Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    /// <param name="id">The HTML id of the node to expand.</param>
+    public async Task ExpandSubtree(string id)
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.ExpandSubtree", Id, id);
+    }
+
+    /// <summary>
+    /// Collapses a node and everything beneath it. Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    /// <param name="id">The HTML id of the node to collapse.</param>
+    public async Task CollapseSubtree(string id)
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.CollapseSubtree", Id, id);
+    }
+
+    /// <summary>
+    /// Spotlights a node: dims everything outside its lineage and visible subtree, and springs the
+    /// camera to frame it. Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    /// <remarks>
+    /// See <see cref="FocusOptions"/> to let the user do this by clicking, and to tune the dim.
+    /// </remarks>
+    /// <param name="id">The HTML id of the node to spotlight.</param>
+    public async Task Focus(string id)
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.Focus", Id, id);
+    }
+
+    /// <summary>
+    /// Clears the spotlight and restores the full view. Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    public async Task ClearFocus()
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.ClearFocus", Id);
+    }
+
+    /// <summary>
+    /// Gets the spotlighted node id, or <see langword="null"/> when nothing is focused.
+    /// Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    public async Task<string?> GetFocusedNodeId()
+    {
+        return await JsRuntime.InvokeAsync<string?>("blazorApextree.GetFocusedNodeId", Id);
+    }
+
+    /// <summary>
+    /// Flows an animated dash along the edges from the root to each of the given nodes.
+    /// Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    /// <remarks>
+    /// See <see cref="EdgeFlowOptions"/> for colour, speed and dash styling.
+    /// </remarks>
+    /// <param name="ids">The HTML ids of the target nodes.</param>
+    public async Task SetActivePath(IEnumerable<string> ids)
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.SetActivePath", Id, ids.ToArray());
+    }
+
+    /// <summary>
+    /// Clears the active path. Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    public async Task ClearActivePath()
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.ClearActivePath", Id);
+    }
+
+    /// <summary>
+    /// Gets the node ids currently on the active path. Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    public async Task<string[]> GetActivePath()
+    {
+        return await JsRuntime.InvokeAsync<string[]>("blazorApextree.GetActivePath", Id) ?? [];
+    }
+
+    /// <summary>
+    /// Expands a node's card in place to reveal its detail section. This is separate from expanding
+    /// the node's children. Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    /// <remarks>
+    /// Enable <see cref="ApexTreeOptions.AutoNodeHeight"/> so the card can grow to fit the detail.
+    /// </remarks>
+    /// <param name="id">The HTML id of the node whose card to expand.</param>
+    public async Task ExpandCard(string id)
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.ExpandCard", Id, id);
+    }
+
+    /// <summary>
+    /// Collapses a node's card back to its summary. Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    /// <param name="id">The HTML id of the node whose card to collapse.</param>
+    public async Task CollapseCard(string id)
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.CollapseCard", Id, id);
+    }
+
+    /// <summary>
+    /// Toggles a node's card between summary and detail. Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    /// <param name="id">The HTML id of the node whose card to toggle.</param>
+    public async Task ToggleCard(string id)
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.ToggleCard", Id, id);
+    }
+
+    /// <summary>
+    /// Replaces the set of expanded cards in one pass. Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    /// <param name="ids">The HTML ids of the nodes whose cards should be expanded.</param>
+    public async Task SetExpandedCards(IEnumerable<string> ids)
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.SetExpandedCards", Id, ids.ToArray());
+    }
+
+    /// <summary>
+    /// Gets the ids of the nodes whose cards are expanded. Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    public async Task<string[]> GetExpandedCards()
+    {
+        return await JsRuntime.InvokeAsync<string[]>("blazorApextree.GetExpandedCards", Id) ?? [];
+    }
+
+    /// <summary>
+    /// Centres the camera on a node, keeping the current zoom level.
+    /// Requires ApexTree core 2.0.0 or later.
+    /// </summary>
+    /// <param name="id">The HTML id of the node to centre on.</param>
+    public async Task CenterOnNode(string id)
+    {
+        await JsRuntime.InvokeVoidAsync("blazorApextree.CenterOnNode", Id, id);
+    }
+
+    /// <summary>
     /// Destroys the chart and recreates it. Useful when the dataset or options have changed.
     /// </summary>
+    /// <remarks>
+    /// For a data-only change prefer <see cref="UpdateData(DataNode{TItem})"/>, which animates the
+    /// difference instead of redrawing from scratch.
+    /// </remarks>
     public async Task RebuildChart()
     {
         await JsRuntime.InvokeVoidAsync("blazorApextree.DeleteChart", Id);

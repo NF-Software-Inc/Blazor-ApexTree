@@ -27,7 +27,18 @@ const ROUTES = [
   'basic', 'custom-template', 'styled-nodes', 'expand-collapse', 'custom-tooltip',
   'node-click', 'dynamic-view', 'org-card', 'selection', 'theme-search',
   'external-labels', 'localization',
+  // ApexTree 2.0 surface: these cover the new interop paths (updateData, focus, active path,
+  // card expansion, batch verbs) and the radial layout.
+  'live-data', 'radial', 'focus-mode', 'expandable-cards', 'active-path',
+  'semantic-zoom', 'batch-verbs',
 ];
+
+// Expected console noise, not a failure. The demo applies a licence key locked to its GitHub Pages
+// domain, so the core correctly reports the mismatch whenever the demo runs anywhere else, which
+// includes localhost both here and in CI. Filtering it keeps the test about render and interop
+// regressions; every other console error still fails the run.
+const EXPECTED_CONSOLE = [/^\[Apex\] License is not valid for this domain/];
+const isExpected = (text) => EXPECTED_CONSOLE.some(re => re.test(text));
 
 const failures = [];
 const launchOpts = channel ? { channel, headless: true } : { headless: true };
@@ -35,7 +46,11 @@ const browser = await chromium.launch(launchOpts);
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
 
 let pageErrors = [];
-page.on('console', m => { if (m.type() === 'error') pageErrors.push(m.text().slice(0, 200)); });
+page.on('console', m => {
+  if (m.type() !== 'error') return;
+  const text = m.text().slice(0, 200);
+  if (!isExpected(text)) pageErrors.push(text);
+});
 page.on('pageerror', e => pageErrors.push('PAGEERROR: ' + e.message.slice(0, 200)));
 
 // Boot the home page: warms the WASM runtime and asserts the landing page loads clean.
@@ -100,6 +115,41 @@ if (!roundTripped) {
   failures.push(`[selection] round-trip failed: ${JSON.stringify(selResult)} notification=${JSON.stringify(notifClean)}`);
 }
 console.log(`[selection] core=${JSON.stringify(selResult.selection || selResult.reason)} csharp=${JSON.stringify(notifClean)}`);
+
+// Interaction: UpdateData must RECONCILE, not rebuild. The invariant the core actually guarantees is
+// that a node whose CONTENT is unchanged keeps its own DOM element; a node whose content changed
+// (here "eng" and "ceo" gain children, so they gain an expand button) has its content rebuilt inside
+// the tree. So mark "ops", which is identical in Q1 and Q2. If the wrapper ever falls back to a
+// rebuild or to Construct, every element is replaced and this catches it.
+pageErrors = [];
+await page.goto(BASE + '/live-data', { waitUntil: 'domcontentloaded' });
+await page.waitForSelector('section svg, .box svg', { timeout: 20000 });
+await page.waitForTimeout(1500);
+
+const marked = await page.evaluate(() => {
+  const el = document.querySelector('g[data-self="ops"]');
+  if (!el) return false;
+  el.setAttribute('data-smoke-marker', '1');
+  return true;
+});
+
+// Q2 adds two engineers under the same "eng" id and hires a designer.
+await page.getByRole('button', { name: 'Q2' }).click();
+await page.waitForTimeout(2500);
+
+const upd = await page.evaluate(() => ({
+  survivorKeptElement: !!document.querySelector('g[data-self="ops"][data-smoke-marker="1"]'),
+  hasNewHire: !!document.querySelector('g[data-self="design"]'),
+  keptSubtree: !!document.querySelector('g[data-self="eng-1"]') && !!document.querySelector('g[data-self="eng-2"]'),
+  nodeCount: document.querySelectorAll('g[data-self]').length,
+}));
+
+if (!marked) failures.push('[live-data] could not find the "ops" node before the update');
+if (!upd.survivorKeptElement) failures.push('[live-data] UpdateData replaced an unchanged node instead of reconciling it');
+if (!upd.hasNewHire) failures.push('[live-data] UpdateData did not add the new node');
+if (!upd.keptSubtree) failures.push('[live-data] UpdateData did not splice in the new subtree');
+if (pageErrors.length) failures.push(`[live-data] console/page errors: ${JSON.stringify(pageErrors)}`);
+console.log(`[live-data] reconciled=${upd.survivorKeptElement} newNode=${upd.hasNewHire} subtree=${upd.keptSubtree} nodes=${upd.nodeCount} errors=${pageErrors.length}`);
 
 await browser.close();
 

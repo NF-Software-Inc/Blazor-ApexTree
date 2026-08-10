@@ -17,7 +17,13 @@ A modern, feature-rich Blazor wrapper for [ApexTree.js](https://apexcharts.com/a
 - **Expand/Collapse** - Built-in support for collapsible tree structures
 - **Tooltips** - Fully customizable hover tooltips
 - **Per-Node Styling** - Individual customization for each node in the tree
-- **Multiple Directions** - Render trees top-down, bottom-up, left-to-right, or right-to-left
+- **Multiple Directions** - Render trees top-down, bottom-up, left-to-right, right-to-left, or radial
+- **Spring Motion** - Collapse, expand and data changes animate, and can be interrupted mid-flight
+- **Live Data Updates** - `UpdateData` reconciles a new dataset instead of redrawing it
+- **Focus Mode** - Spotlight a node's lineage and subtree, dimming everything else
+- **Semantic Zoom** - Nodes shed detail as they shrink, so a zoomed-out tree stays readable
+- **Expandable Cards** - A card can expand in place to reveal stats, a progress meter and actions
+- **Active Path** - Flow an animated dash along the route from the root to any node
 - **Multi-Framework** - Targets .NET 8.0, 9.0, and 10.0
 
 ## 📦 Installation
@@ -202,6 +208,54 @@ The license only needs to be set once for your entire application.
 | `OnNodeExpand`   | `EventCallback<NodeExpandEventArgs>`   | Callback invoked when a node is expanded.                                             |
 | `OnNodeCollapse` | `EventCallback<NodeCollapseEventArgs>` | Callback invoked when a node is collapsed.                                            |
 
+### Component Methods
+
+Capture the component with `@ref` to call these.
+
+```razor
+<ApexTree @ref="TreeRef" TItem="string" Parent="Root" Options="Options" />
+
+@code {
+    private ApexTree<string>? TreeRef;
+
+    private async Task NextQuarter() => await TreeRef!.UpdateData(NextRoot);
+}
+```
+
+| Method                    | Description                                                                    |
+| ------------------------- | ------------------------------------------------------------------------------ |
+| `UpdateData(data)`        | Reconcile a new dataset with animation, preserving collapse/selection/focus     |
+| `Construct(data)`         | Replace the data and redraw without animation                                   |
+| `RebuildChart()`          | Destroy and recreate the chart, e.g. after an options change                     |
+| `CollapseNode(id)`        | Collapse one node                                                               |
+| `ExpandNode(id)`          | Expand one node                                                                 |
+| `CollapseAll()`           | Collapse every node                                                             |
+| `ExpandAll()`             | Expand every node                                                               |
+| `ExpandToDepth(depth)`    | Expand down to a depth, collapsing everything deeper                            |
+| `ExpandSubtree(id)`       | Expand a node and everything beneath it                                         |
+| `CollapseSubtree(id)`     | Collapse a node and everything beneath it                                       |
+| `Focus(id)`               | Spotlight a node's lineage and subtree                                          |
+| `ClearFocus()`            | Clear the spotlight                                                             |
+| `GetFocusedNodeId()`      | Read the spotlighted node id, or `null`                                         |
+| `SetActivePath(ids)`      | Flow an animated dash from the root to each node                                |
+| `ClearActivePath()`       | Clear the active path                                                           |
+| `GetActivePath()`         | Read the ids currently on the active path                                       |
+| `ExpandCard(id)`          | Expand a node's card in place to show its detail section                        |
+| `CollapseCard(id)`        | Collapse a node's card back to its summary                                      |
+| `ToggleCard(id)`          | Toggle a node's card                                                            |
+| `SetExpandedCards(ids)`   | Replace the set of expanded cards                                               |
+| `GetExpandedCards()`      | Read which cards are expanded                                                   |
+| `ChangeLayout(direction)` | Switch growth direction                                                         |
+| `FitScreen()`             | Fit the tree to the viewport                                                    |
+| `CenterOnNode(id)`        | Centre the camera on a node, keeping the zoom                                   |
+| `Zoom(factor)`            | Zoom relative to the current scale                                              |
+| `ResetPanZoomBaseAsync()` | Re-base pan/zoom after a programmatic viewBox change                            |
+| `ExportToSvg()`           | Download the tree as an SVG file                                                |
+| `Render(keepOldPosition)` | Re-render in place                                                              |
+
+Everything from `UpdateData` through `GetExpandedCards`, plus `CenterOnNode`, requires ApexTree core
+2.0.0 or later, which is bundled from Blazor-ApexTree 11.0.0 onward.
+
 ### ApexTreeOptions
 
 #### Layout & Sizing
@@ -243,6 +297,37 @@ The license only needs to be set once for your entire application.
 | `HighlightOnHover`      | `bool`  | `true`  | Highlight nodes on hover             |
 | `GroupLeafNodes`        | `bool?` | `null`  | Group leaf nodes together            |
 | `GroupLeafNodesSpacing` | `int?`  | `null`  | Spacing between grouped leaf nodes   |
+
+#### ApexTree 2.0 options
+
+All added in Blazor-ApexTree 11.0.0, which bundles ApexTree core 2.0.0. Every one is optional and
+leaves the previous behaviour in place when unset.
+
+| Property                           | Type                       | Default | Description                                                                     |
+| ---------------------------------- | -------------------------- | ------- | ------------------------------------------------------------------------------- |
+| `LayoutType`                       | `LayoutType?`              | `Tree`  | `Cluster` pins leaves to the outer rank; pair with `Direction.Radial`            |
+| `Motion`                           | `MotionOptions?`           | `null`  | Spring preset and expand stagger                                                |
+| `Focus`                            | `FocusOptions?`            | `null`  | Click-to-focus gesture and dim strength for spotlight mode                       |
+| `SemanticZoom`                     | `SemanticZoomOptions?`     | `null`  | Level-of-detail thresholds in on-screen node pixels                             |
+| `AutoNodeHeight`                   | `AutoNodeHeightOptions?`   | `null`  | Measure each node's content and give it its own height                          |
+| `CardExpansion`                    | `CardExpansionOptions?`    | `null`  | Let a card expand in place to reveal its detail section                          |
+| `EdgeFlow`                         | `EdgeFlowOptions?`         | `null`  | Colour, speed and dash styling for the active path                              |
+| `MaxZoomNodeSpan`                  | `int?`                     | `8`     | Caps zoom-in when re-fitting after collapse; `0` disables the cap               |
+| `EnableCommandPalette`             | `bool?`                    | `false` | Ctrl/Cmd + K overlay for jumping to a node and expanding or collapsing all      |
+| `CountBadgeEnabled`                | `bool?`                    | `false` | Persistent count badge on every node, independent of collapse state              |
+| `CountBadgeSource`                 | `CountBadgeSource?`        | `Descendants` | What the count badge counts                                               |
+| `CountBadgeDataKey`                | `string?`                  | `count` | Key read from node data when the source is `Data`                               |
+| `CountBadgeThreshold`              | `int?`                     | `1`     | Minimum count before the badge appears                                          |
+| `CountBadgeBGColor`                | `string?`                  | `#EEF2FF` | Count badge background                                                        |
+| `CountBadgeFontColor`              | `string?`                  | `#3730A3` | Count badge text colour                                                       |
+| `CountBadgeFontSize`               | `int?`                     | `12`    | Count badge font size                                                           |
+| `ExpandCollapseButtonSize`         | `int?`                     | `15`    | Button diameter; the tap target stays at least 24px regardless                   |
+| `ExpandCollapseButtonIconColor`    | `string?`                  | `#475467` | Colour of the `+`/`-` glyph                                                   |
+| `ExpandCollapseButtonHaloColor`    | `string?`                  | `null`  | Opaque ring behind the button, in your page background colour                    |
+
+`ExternalLabel` also gained `CollisionStrategy`, which culls colliding labels on crowded radial
+rings. `OrgNodeData` gained `Tags`, `Stats`, `Progress`, `Actions` and `Details` for the expandable
+card, and `DataNode<TItem>` gained `HasChildren` for nodes whose children load later.
 
 #### Templates
 

@@ -305,9 +305,40 @@ public class ApexTreeOptions : DataNodeOptions
 	/// Border color of the expand/collapse button.
 	/// </summary>
 	/// <remarks>
-	/// Prefix with '#'. Default: '#BCBCBC'.
+	/// Prefix with '#'. Default: '#E4E7EC'.
 	/// </remarks>
 	public string? ExpandCollapseButtonBorderColor { get; set; }
+
+	/// <summary>
+	/// Color of the '+'/'-' glyph inside the expand/collapse button.
+	/// </summary>
+	/// <remarks>
+	/// Prefix with '#'. Default: '#475467'. Set this alongside
+	/// <see cref="ExpandCollapseButtonBGColor"/> when theming, or the glyph can end up invisible
+	/// against the button fill. Requires ApexTree core 2.0.0 or later.
+	/// </remarks>
+	public string? ExpandCollapseButtonIconColor { get; set; }
+
+	/// <summary>
+	/// Color of an opaque ring drawn behind the expand/collapse button, so it punches through the
+	/// node border and the incoming edge instead of dissolving into them.
+	/// </summary>
+	/// <remarks>
+	/// Prefix with '#'. Off by default, because the library cannot know what the canvas behind the
+	/// chart is painted with: set it to that background color. Requires ApexTree core 2.0.0 or later.
+	/// </remarks>
+	public string? ExpandCollapseButtonHaloColor { get; set; }
+
+	/// <summary>
+	/// Diameter of the expand/collapse button in pixels. Default: 15.
+	/// </summary>
+	/// <remarks>
+	/// The button also carries an invisible hit area, so the effective tap target stays at least
+	/// 24px (the WCAG 2.2 SC 2.5.8 minimum) however small the button is drawn. Lower this for
+	/// marker-style nodes small enough that the button would dominate them. Requires ApexTree core
+	/// 2.0.0 or later.
+	/// </remarks>
+	public int? ExpandCollapseButtonSize { get; set; }
 
 	/// <summary>
 	/// Built-in theme preset. <see cref="ApexTree.Theme.Light"/> uses the default soft-neutral palette,
@@ -373,4 +404,125 @@ public class ApexTreeOptions : DataNodeOptions
 	/// Controls ARIA role/label semantics and keyboard navigation.
 	/// </summary>
 	public A11yOptions? A11y { get; set; }
+
+	/// <summary>
+	/// How the layout places leaf nodes. Default: <see cref="ApexTree.LayoutType.Tree"/>. Set to
+	/// <see cref="ApexTree.LayoutType.Cluster"/> with <see cref="Direction.Radial"/> for a
+	/// dendrogram. Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	public LayoutType? LayoutType { get; set; }
+
+	/// <summary>
+	/// Caps how far the camera zooms in when it re-fits after a collapse or expand, so a view of a
+	/// few remaining nodes does not balloon. Default: 8.
+	/// </summary>
+	/// <remarks>
+	/// Measured in node widths and heights: the fit always spans at least this many, centred on the
+	/// visible nodes. Larger means less zoom-in; 0 disables the cap and fits tightly. The cap never
+	/// shrinks the chart below 1:1, so a chart narrower than this many node widths keeps its tight
+	/// fit rather than scaling down on every collapse. Only applies while
+	/// <see cref="EnableExpandCollapseZoom"/> is <see langword="true"/>. Requires ApexTree core
+	/// 2.0.0 or later.
+	/// </remarks>
+	public int? MaxZoomNodeSpan { get; set; }
+
+	/// <summary>
+	/// Show a command palette overlay on Ctrl/Cmd + K for jumping to a node, expanding or
+	/// collapsing everything, and fitting the view. Default: <see langword="false"/>.
+	/// Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	public bool? EnableCommandPalette { get; set; }
+
+	/// <summary>
+	/// Tuning for the spring motion behind collapse/expand, data updates and camera moves.
+	/// Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	public MotionOptions? Motion { get; set; }
+
+	/// <summary>
+	/// Focus ("spotlight") mode options. Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	public FocusOptions? Focus { get; set; }
+
+	/// <summary>
+	/// Semantic zoom (level of detail) options. Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	public SemanticZoomOptions? SemanticZoom { get; set; }
+
+	/// <summary>
+	/// Per-node measured height options. Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	public AutoNodeHeightOptions? AutoNodeHeight { get; set; }
+
+	/// <summary>
+	/// Expandable-card options. Pair with <see cref="AutoNodeHeight"/> so an expanded card can
+	/// actually grow. Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	public CardExpansionOptions? CardExpansion { get; set; }
+
+	/// <summary>
+	/// Styling for the animated active path set by
+	/// <see cref="ApexTree{TItem}.SetActivePath(IEnumerable{string})"/>.
+	/// Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	public EdgeFlowOptions? EdgeFlow { get; set; }
+
+	/// <summary>
+	/// Show a persistent count badge on every node, independent of collapse state. Default:
+	/// <see langword="false"/>. Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	/// <remarks>
+	/// This is distinct from <see cref="CollapseBadgeEnabled"/>, which only counts what a collapse
+	/// is currently hiding.
+	/// </remarks>
+	public bool? CountBadgeEnabled { get; set; }
+
+	/// <summary>
+	/// What the count badge counts. Default:
+	/// <see cref="ApexTree.CountBadgeSource.Descendants"/>.
+	/// </summary>
+	public CountBadgeSource? CountBadgeSource { get; set; }
+
+	/// <summary>
+	/// When <see cref="CountBadgeSource"/> is <see cref="ApexTree.CountBadgeSource.Data"/>, the key
+	/// to read the number from on each node's data object. Default: 'count'.
+	/// </summary>
+	public string? CountBadgeDataKey { get; set; }
+
+	/// <summary>
+	/// Minimum count required before the count badge appears. Default: 1.
+	/// </summary>
+	public int? CountBadgeThreshold { get; set; }
+
+	/// <summary>
+	/// Background color of the count badge.
+	/// </summary>
+	/// <remarks>
+	/// Prefix with '#'. Default: '#EEF2FF'.
+	/// </remarks>
+	public string? CountBadgeBGColor { get; set; }
+
+	/// <summary>
+	/// Font color of the count badge.
+	/// </summary>
+	/// <remarks>
+	/// Prefix with '#'. Default: '#3730A3'.
+	/// </remarks>
+	public string? CountBadgeFontColor { get; set; }
+
+	/// <summary>
+	/// Font size of the count badge in pixels. Default: 12.
+	/// </summary>
+	[JsonIgnore]
+	public int? CountBadgeFontSize { get; set; }
+
+	[JsonInclude]
+	[JsonPropertyName("countBadgeFontSize")]
+	private string? SerializeCountBadgeFontSize { get => ChartSerializer.GetMeasurement(CountBadgeFontSize, CountBadgeFontSizeUnits, true); }
+
+	/// <summary>
+	/// The measurement type to use for the <see cref="CountBadgeFontSize"/>.
+	/// </summary>
+	[JsonIgnore]
+	public LengthUnits CountBadgeFontSizeUnits { get; set; } = LengthUnits.Pixels;
 }

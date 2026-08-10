@@ -36,6 +36,19 @@ public class DataNode<TItem>
 	public List<DataNode<TItem>>? Children { get; set; }
 
 	/// <summary>
+	/// Marks this node as having children that are not loaded yet, so it renders an expand button
+	/// even though <see cref="Children"/> is empty. Requires ApexTree core 2.0.0 or later.
+	/// </summary>
+	/// <remarks>
+	/// The core's lazy-loading callback is a JavaScript function and is not exposed through this
+	/// wrapper. Use this flag with the <c>OnNodeExpanded</c> event instead: mark the node, fetch the
+	/// children in C# when it is expanded, then call
+	/// <see cref="ApexTree{TItem}.UpdateData(DataNode{TItem})"/> with the filled-in tree. Because
+	/// that reconciles rather than rebuilds, the subtree springs into place.
+	/// </remarks>
+	public bool? HasChildren { get; set; }
+
+	/// <summary>
 	/// Adds a child item to this node and returns it.
 	/// </summary>
 	/// <param name="data">The data value for the child.</param>
