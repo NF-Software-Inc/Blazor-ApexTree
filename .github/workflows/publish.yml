@@ -92,6 +92,20 @@ jobs:
           git push origin "$NEW_VERSION"
           echo "Created and pushed tag: $NEW_VERSION"
 
+      # The release commit message IS the release notes, so publish it as-is. It previously got
+      # wrapped in "Automated release <tag>" plus "Commit:" and "Bump type:" labels, which told a
+      # reader nothing the tag and the notes did not already say.
+      - name: Build release notes
+        id: notes
+        run: |
+          # Drop the conventional-commit prefix so the notes open on the actual summary.
+          BODY="${COMMIT_MSG#release: }"
+          {
+            echo 'body<<APEXTREE_RELEASE_NOTES_EOF'
+            echo "$BODY"
+            echo 'APEXTREE_RELEASE_NOTES_EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub release
         uses: actions/create-release@v1
         env:
@@ -99,11 +113,7 @@ jobs:
         with:
           tag_name: ${{ steps.version.outputs.new_version }}
           release_name: Release ${{ steps.version.outputs.new_version }}
-          body: |
-            Automated release ${{ steps.version.outputs.new_version }}
-
-            Commit: ${{ github.event.head_commit.message }}
-            Bump type: ${{ steps.version.outputs.bump_type }}
+          body: ${{ steps.notes.outputs.body }}
           draft: false
           prerelease: false
 
