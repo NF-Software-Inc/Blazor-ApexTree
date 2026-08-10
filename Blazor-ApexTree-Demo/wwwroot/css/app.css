@@ -157,6 +157,57 @@ body {
   transform: translateY(-2px);
 }
 
+/* Landing page example grid */
+.example-group-heading {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+/* The whole card is the link, so it needs to behave like a block and not inherit link coloring. */
+.example-card {
+  display: block;
+  height: 100%;
+  color: inherit;
+}
+
+.example-card:hover {
+  border-color: var(--primary-color);
+}
+
+/* Column layout so the badge can be pushed to the card foot and line up across a row, whatever
+   length the description runs to. */
+.example-card .card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.example-card .content {
+  flex: 1 1 auto;
+}
+
+.example-card-badge {
+  align-self: flex-start;
+}
+
+.example-card:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* The markup used to carry a "md-36" class that is defined in neither stylesheet, so the glyph fell
+   back to the inherited 16px and sat lost inside a 3rem icon box. Size it here instead. */
+.example-card-icon {
+  height: 2.25rem;
+  width: 2.25rem;
+}
+
+.example-card-icon .material-icons {
+  font-size: 2rem;
+  line-height: 1;
+  vertical-align: middle;
+}
+
 /* Hero Section Override */
 .hero.is-medium.is-link {
   background: linear-gradient(

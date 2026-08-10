@@ -5,33 +5,40 @@
 
 <section class="section">
     <div class="container">
-        <h2 class="title is-4 mb-5">Examples</h2>
-        <div class="columns is-multiline">
-            @foreach (var example in Examples)
-            {
-                <div class="column is-4-desktop is-6-tablet">
-                    <div class="card" style="height: 100%;">
-                        <div class="card-content">
-                            <div class="media mb-3">
-                                <div class="media-left">
-                                    <span class="icon is-large has-text-link">
-                                        <span class="material-icons md-36">@example.Icon</span>
-                                    </span>
+        @foreach (var group in Groups)
+        {
+            <h2 class="title is-5 example-group-heading">@group.Heading</h2>
+            <div class="columns is-multiline mb-5">
+                @foreach (var example in group.Items)
+                {
+                    <div class="column is-4-desktop is-6-tablet">
+                        <a href="@example.Url" class="card example-card">
+                            <div class="card-content">
+                                <div class="media mb-3">
+                                    <div class="media-left">
+                                        <span class="icon example-card-icon has-text-link">
+                                            <span class="material-icons">@example.Icon</span>
+                                        </span>
+                                    </div>
+                                    <div class="media-content">
+                                        <p class="title is-5 mb-0">@example.Title</p>
+                                    </div>
                                 </div>
-                                <div class="media-content">
-                                    <p class="title is-5 mb-0">@example.Title</p>
+                                <div class="content">
+                                    @example.Description
                                 </div>
+                                @if (example.IsNew)
+                                {
+                                    @* Sits at the card foot rather than beside the title: in the header
+                                       it stole enough width to wrap two-word titles onto a second line,
+                                       leaving badged and unbadged cards in a row visibly ragged. *@
+                                    <span class="tag is-link is-light example-card-badge" title="Added in Blazor-ApexTree 11.0.0">New in 11.0</span>
+                                }
                             </div>
-                            <div class="content">
-                                @example.Description
-                            </div>
-                        </div>
-                        <footer class="card-footer">
-                            <a href="@example.Url" class="card-footer-item has-text-link has-text-weight-semibold">View Example</a>
-                        </footer>
+                        </a>
                     </div>
-                </div>
-            }
-        </div>
+                }
+            </div>
+        }
     </div>
 </section>

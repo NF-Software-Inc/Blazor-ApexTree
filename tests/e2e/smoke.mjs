@@ -66,6 +66,24 @@ if (pageErrors.length) failures.push(`[(home)] console/page errors: ${JSON.strin
 if (bootErrUi) failures.push('[(home)] Blazor error UI is visible');
 console.log(`[(home)] booted errUi=${bootErrUi} errors=${pageErrors.length}`);
 
+// The landing page's example grid is a hand-maintained array in Home.razor.cs, and it silently fell
+// two releases behind: it advertised 7 of 19 demos, so most of the library was unreachable for anyone
+// who did not read the sidebar. Assert it matches the route list exactly, in both directions, so
+// adding a page without adding its card fails here instead of shipping.
+async function checkHomeGrid() {
+  await page.goto(BASE + '/', { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('.example-card', { timeout: 60000 });
+  await page.waitForTimeout(500);
+  const cards = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('.example-card')).map(a => a.getAttribute('href')));
+  const missing = ROUTES.filter(r => !cards.includes(r));
+  const extra = cards.filter(h => !ROUTES.includes(h));
+  if (missing.length) failures.push(`[home grid] no example card links to: ${JSON.stringify(missing)}`);
+  if (extra.length) failures.push(`[home grid] card links to a route that is not tested here: ${JSON.stringify(extra)}`);
+  console.log(`[home grid] cards=${cards.length} routes=${ROUTES.length} missing=${missing.length} extra=${extra.length}`);
+}
+await checkHomeGrid();
+
 async function checkRoute(route) {
   pageErrors = [];
   const label = route || '(home)';
