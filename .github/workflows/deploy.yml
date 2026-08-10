@@ -3,9 +3,16 @@
 name: deploy
 on:
   workflow_dispatch:
+  # Keep the public demo in step with what actually ships. This was dispatch-only, and the site
+  # silently sat a release behind. Scoped to release commits (the same guard publish.yml uses) so
+  # ordinary commits do not each spend a full wasm-tools publish.
+  push:
+    branches: [main]
 
 jobs:
   build:
+    # head_commit is null on workflow_dispatch, so check the event first to keep manual runs working.
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -28,39 +35,39 @@ jobs:
       working-directory: ./Blazor-ApexTree-Demo
     - name: Set base href
       run: |
-        echo "BASE_HREF=/Blazor-ApexTree/" >> "$GITHUB_ENV"
+        BASE_HREF=/Blazor-ApexTree/
+        echo "BASE_HREF=$BASE_HREF" >> "$GITHUB_ENV"
+        # Assign locally too: GITHUB_ENV only reaches later steps, so echoing $BASE_HREF straight
+        # after writing it used to log an empty value.
         echo "Using BASE_HREF=$BASE_HREF"
+    # No BaseHref property here: the Blazor WASM SDK does not consume one, so passing it only looked
+    # like it set the base. The rewrite step below is what actually mounts the app under the project
+    # path.
     - name: Publish
-      run: dotnet publish -c Release -o ${{ github.workspace }}/publish -p:BaseHref="${BASE_HREF}"
+      run: dotnet publish -c Release -o ${{ github.workspace }}/publish
       working-directory: ./Blazor-ApexTree-Demo
     - name: Add .nojekyll
       run: |
         touch ${{ github.workspace }}/publish/wwwroot/.nojekyll
         echo "disable jekyll" > "${{ github.workspace }}/publish/wwwroot/.nojekyll"
-    - name: Rewrite base href in index.html (project pages)
+    # Both pages carry <base href="/" /> in the repo so they work when served at the origin root
+    # (local dev). On project Pages the app is mounted under /Blazor-ApexTree/, and 404.html reads
+    # this same base to strip the project segment off the requested route, so the two files must be
+    # rewritten together or deep links break.
+    - name: Rewrite base href for project pages (index.html + 404.html)
       run: |
-        sed -i "s|<base href=\"[^\"]*\" */>|<base href=\"${BASE_HREF}\" />|g" "${{ github.workspace }}/publish/wwwroot/index.html"
-    - name: Add SPA 404 fallback
-      run: |
-        cat > "${{ github.workspace }}/publish/wwwroot/404.html" <<'EOF'
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8" />
-          <title>Redirecting…</title>
-          <script>
-            (function() {
-              var l = window.location;
-              var path = l.pathname + l.search + l.hash;
-
-              path = path.replace(/\/404\.html$/, "/");
-              l.replace(l.origin + l.pathname.replace(/\/[^\/]*$/, "/") + "?/" + path.replace(/^\//, ""));
-            })();
-          </script>
-        </head>
-        <body>Redirecting…</body>
-        </html>
-        EOF
+        for f in index.html 404.html; do
+          target="${{ github.workspace }}/publish/wwwroot/$f"
+          if [ ! -f "$target" ]; then
+            echo "::error::$f missing from the publish output; the SPA deep-link fallback needs both"
+            exit 1
+          fi
+          sed -i "s|<base href=\"[^\"]*\" */>|<base href=\"${BASE_HREF}\" />|g" "$target"
+          grep -q "<base href=\"${BASE_HREF}\" />" "$target" || {
+            echo "::error::failed to rewrite the base href in $f"
+            exit 1
+          }
+        done
     - name: Configure Pages
       uses: actions/configure-pages@v5.0.0
     - name: Upload Pages artifact

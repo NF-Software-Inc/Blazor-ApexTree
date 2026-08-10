@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <!-- Rewritten to the project path at publish time, exactly like index.html's, so the two
+         always agree on where the app is mounted. -->
+    <base href="/" />
+    <script>
+      // GitHub Pages serves static files only: it has no route table, so a deep link such as
+      // /Blazor-ApexTree/live-data matches no file and Pages returns this page instead. Encode the
+      // requested route into a query the app can read, then hand off to index.html, whose decoder
+      // restores the real URL before Blazor boots. Without this, every shared link to a specific
+      // demo silently lands on the home page.
+      (function () {
+        var l = window.location;
+        // Read the mount point from <base> rather than assuming it: "/" when the app is served at
+        // the origin root, "/Blazor-ApexTree/" on project Pages. Slicing it off is what keeps the
+        // route relative to the app; encoding the full pathname would repeat the project segment.
+        var base = new URL(document.baseURI).pathname;
+        var route =
+          l.pathname.indexOf(base) === 0
+            ? l.pathname.slice(base.length)
+            : l.pathname.replace(/^\//, "");
+        if (route === "404.html") route = "";
+        // "&" is the separator the decoder splits on, so any literal one in the route or query is
+        // escaped here and restored there.
+        var query = l.search ? "&" + l.search.slice(1).replace(/&/g, "~and~") : "";
+        l.replace(
+          l.origin + base + "?/" + route.replace(/&/g, "~and~") + query + l.hash
+        );
+      })();
+    </script>
+  </head>
+  <body>
+    Redirecting…
+  </body>
+</html>

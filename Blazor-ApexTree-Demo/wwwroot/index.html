@@ -12,6 +12,28 @@
     />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
+    <script>
+      // Restores a deep link that GitHub Pages bounced through 404.html, which encodes the
+      // requested route as "?/route" because Pages cannot route to it server-side. This must run
+      // before Blazor reads the URL, otherwise the router boots on the base path and shows the
+      // home page. No-op unless the query carries an encoded route, so local dev, plain visits
+      // and in-app navigation are untouched.
+      (function () {
+        var l = window.location;
+        if (l.search.charAt(1) !== "/") return;
+        var path = l.pathname.charAt(l.pathname.length - 1) === "/" ? l.pathname : l.pathname + "/";
+        // "?/route&a=1~and~b=2" -> "route?a=1&b=2": the first "&" was the query separator, any
+        // other was escaped by 404.html.
+        var decoded = l.search
+          .slice(2)
+          .split("&")
+          .map(function (part) {
+            return part.replace(/~and~/g, "&");
+          })
+          .join("?");
+        window.history.replaceState(null, "", path + decoded + l.hash);
+      })();
+    </script>
     <script type="importmap"></script>
   </head>
 
